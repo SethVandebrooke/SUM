@@ -1,4 +1,4 @@
-function $UserApp(name,uid) {
+function $SUM(name,uid) {
     var app = this;
     app.uid = uid || "username";
     if (localStorage.getItem("uid") != null) {
@@ -116,7 +116,7 @@ function $UserApp(name,uid) {
 // HTML implementation
 
 (function(w){
-    var app = new $UserApp("defaultApp");
+    var app = new $SUM("defaultApp");
     if (document.querySelectorAll("html")[0].getAttribute("force-login")?true:false) {
         if (!app.loggedIn()) {
             window.location.href = document.querySelectorAll("html")[0].getAttribute("force-login");
