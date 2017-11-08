@@ -7,6 +7,7 @@ Serverless, Painless, Codeless user implimentation
  - SUM requires no configuration. Just plug and play right out of the box! You don't even have to touch the javascript if you don't want to!
  - SUM is fully extendable! It's built with a simple API that gives you full control over its capabilities.
  - SUM user data persists across multiple pages.
+ - SUM redirects to the login page if the user isn't logged in, but only when you want it to.
 
 Why use SUM? 
  1. Because it SUMs up user management for your prototypes, so that it is ACTUALLY worth it to add behavior to a prototype you're probably going to through away.
@@ -52,5 +53,12 @@ To display user information simply use the id or name that you used in the form 
  <email></email>
  ```
  Note: if you try to display the users password it will appear as a hash, because that's what's being stored.
+ 
+ If you only want users to be able to view a page if they are logged in, then use the following attribute in the html tag:
+ ```html
+<html force-login="login.html">
+ ```
+ Simply use 'force-login' to specify where to go to login and if the viewer isn't logged in then it will automatically redirect to that page.
+
 
 More documentation is on the way...
