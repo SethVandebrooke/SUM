@@ -6,6 +6,7 @@ Serverless, Painless, Codeless user implimentation
  - SUM focuses on making signing in, logging in, logging out, viewing and updating user data easier than making the UI itself.
  - SUM requires no configuration. Just plug and play right out of the box! You don't even have to touch the javascript if you don't want to!
  - SUM is fully extendable! It's built with a simple API that gives you full control over its capabilities.
+ - SUM user data persists across multiple pages.
 
 Why use SUM? 
  1. Because it SUMs up user management for your prototypes, so that it is ACTUALLY worth it to add behavior to a prototype you're probably going to through away.
