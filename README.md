@@ -1,19 +1,34 @@
 # SUM - Serverless User Management
 Serverless, Painless, Codeless user implimentation
 
-SUM makes prototyping web/hybrid applications of any kind quick and painless without taking up hardly any space (it's 14 Kb).
-SUM works anywhere and everywhere: electron (windows, mac, linux), cordova (android, ios, etc...), and browsers alike.
-SUM focuses on making signing in, logging in, logging out, viewing and updating user data easier than making the UI itself.
-SUM requires no configuration. Just plug and play right out of the box! You don't even have to touch the javascript if you don't want to!
-SUM is fully extendable! It's built with a simple API that gives you full control over its capabilities.
+ - SUM makes prototyping web/hybrid applications of any kind quick and painless without taking up hardly any space (it's 14 Kb unminified).
+ - SUM works anywhere and everywhere: electron (windows, mac, linux), cordova (android, ios, etc...), and browsers alike.
+ - SUM focuses on making signing in, logging in, logging out, viewing and updating user data easier than making the UI itself.
+ - SUM requires no configuration. Just plug and play right out of the box! You don't even have to touch the javascript if you don't want to!
+ - SUM is fully extendable! It's built with a simple API that gives you full control over its capabilities.
 
 Why use SUM? 
-Because it SUMs up user management for your prototypes, so that it is ACTUALLY worth it to add behavior to a prototype you're probably going to through away.
-OR maybe you're making an offline application that just needs to handle user prefereces.
-Better yet, you already made your offline application and you simply want multi user functionality without making entire backend!
+ 1. Because it SUMs up user management for your prototypes, so that it is ACTUALLY worth it to add behavior to a prototype you're probably going to through away.
+ 2. OR maybe you're making an offline application that just needs to handle user prefereces.
+ 3. Better yet, you already made your offline application and you simply want multi user functionality without making entire backend!
 
+# Getting Started
 
-# Using SUM without touching any code
+Just download it or clone it with git:
+```
+git clone https://github.com/SethVandebrooke/SUM
+```
+
+SUM installs in 2 easy steps...
+
+First include SUM at the bottom of the body:
+```html
+<script src="/path/SUM.min.js"></script>
+```
+Then you're done! 
+Oh wait, that was one step.
+
+# Using SUM in HTML
 
 Forms only requires 3 attributes and 1 input to become fully functional.
 
