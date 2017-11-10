@@ -64,7 +64,13 @@ To display user information simply use the id or name that you used in the form 
 
 ## Basic functions
 
+SUM's basic functions are fairly simple.
 
+Something you may notice is register, update and login all use the same parameters: userData, done and fail.
+UserData is handled differently in each function but done and fail operate the same on every function.
+Both done and fail can either be a URL or a function.
+If the given function succeeds than it will run the done function or send the user to that URL.
+Likewise if the given function fails with any kind of error, it will run the fail function or go to that URL.
 
 Function                                    | Returns           | Description 
 ------------------------------------------- | ----------------- | ---------------------------------------------
@@ -75,6 +81,39 @@ app.logout(done)                            | object            | Logs user out.
 app.loggedIn()                              | boolean           | Returns true or false whether a user is logged in.
 app.loggedInAs()                            | string            | Returns username of the user that is logged in.
 app.currentUser()                           | object            | Returns the user object of the user that is logged in.
+
+### Example code
+
+```js
+app.register({
+    username: "JohnDoe",
+    password: "783jojo",
+    email: "joe@doe.com"
+}, function (data) { // Data is the user object that was passed to the register function
+   alert("Welcome "+data.username+"!");
+}, function (data) {
+   alert("Oh no something went wrong!");
+});
+```
+
+```js
+app.update({
+    email: "john@doe.com" // change email to 'john@doe.com'
+}, function (data) { // Data is the user object that was passed to the update function
+   alert("Your email was changed to "+data.email+"!");
+}, function (data) {
+   alert("Oh no something went wrong!");
+});
+```
+
+```js
+app.login({
+    username: "JohnDoe", // Replace username with whatever is set as the uid (required)
+    password: "783jojo" // Password is always required
+}, "profilePage.html", function (data) {
+   alert("Oh no something went wrong!");
+});
+```
 
 ## Advance functions
 
