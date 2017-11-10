@@ -60,5 +60,33 @@ To display user information simply use the id or name that you used in the form 
  ```
  Simply use 'force-login' to specify where to go to login and if the viewer isn't logged in then it will automatically redirect to that page.
 
+# SUM API
+
+## Basic functions
+
+
+
+Function                                    | Returns           | Description 
+------------------------------------------- | ----------------- | ---------------------------------------------
+app.register(userData, done, fail)          | undefined         | Registers a user. 
+app.update(userData, done, fail)            | undefined         | Updates user properties
+app.login(userData, done, fail)             | undefined         | Logs user in.
+app.logout(done)                            | object            | Logs user out.
+app.loggedIn()                              | boolean           | Returns true or false whether a user is logged in.
+app.loggedInAs()                            | string            | Returns username of the user that is logged in.
+app.currentUser()                           | object            | Returns the user object of the user that is logged in.
+
+## Advance functions
+
+Function                                    | Returns           | Description 
+------------------------------------------- | ----------------- | ---------------------------------------------
+app.users.add(OBJECT)                                 | undefined         | Stores an object in the datasection
+app.users.edit(whereThis,equalsThis,setThis,toThis)   | undefined         | Changes a property's value of any object who's given 
+app.users.property equals the given value.
+app.users.remove(whereThis,equalsThis)                | undefined         | Removes any object who's given property equals the given value.
+app.users.get(whereThis,equalsThis)                   | object            | Returns the object who's given property equals the given value.
+app.users.listAll()                                   | array of objects  | Returns all stored objects in the dataSection
+app.users.search(whereThis,equalsThis)                | array of objects  | Returns all objects who's given property equals the given value.
+app.getForm(form)                                    | object | Takes a DOM form element and returns an object where the input element ID\Names are the keys and their values are the values
 
 More documentation is on the way...
