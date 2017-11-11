@@ -1,5 +1,5 @@
 # SUM - Serverless User Management
-Serverless, Painless, Codeless user implimentation
+Serverless, Painless, Codeless user implimentation (optionally)
 
 ### What is it? ...and what does it do?
 
