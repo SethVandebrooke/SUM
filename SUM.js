@@ -134,15 +134,15 @@ function $SUM(name,uid,loggedIn,loggedOut) {
     var app = new $SUM("defaultApp");
     var forms = document.querySelectorAll("form");
     forms.forEach(function(e) {
+        var formData = app.getForm(e);
         e.addEventListener("submit", function (e2) {
+            var id = e.getAttribute("uid");
+            if (id != null) {
+                app.uid = id;
+                localStorage.setItem("uid", id);
+            }
             if (e.getAttribute("type")==="login") {
                 e2.preventDefault();
-                var id = e.getAttribute("uid");
-                if (id != null) {
-                    app.uid = id;
-                    localStorage.setItem("uid",id);
-                }
-                var formData = app.getForm(e);
                 app.login(
                     formData,
                     e.getAttribute("on-success") || window.location.href,
@@ -151,12 +151,6 @@ function $SUM(name,uid,loggedIn,loggedOut) {
             }
             if (e.getAttribute("type") === "signup") {
                 e2.preventDefault();
-                var id = e.getAttribute("uid");
-                if (id != null) {
-                    app.uid = id;
-                    localStorage.setItem("uid", id);
-                }
-                var formData = app.getForm(e);
                 app.register(
                     formData,
                     e.getAttribute("on-success") || window.location.href,
@@ -165,7 +159,6 @@ function $SUM(name,uid,loggedIn,loggedOut) {
             }
             if (e.getAttribute("type") === "update") {
                 e2.preventDefault();
-                var formData = app.getForm(e);
                 app.update(
                     formData,
                     app.loggedInAs(),
