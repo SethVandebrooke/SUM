@@ -204,7 +204,8 @@ app.users.remove(whereThis,equalsThis)                | undefined         | Remo
 app.users.get(whereThis,equalsThis)                   | object            | Returns the object who's given property equals the given value.
 app.users.listAll()                                   | array of objects  | Returns all stored objects in the dataSection
 app.users.search(whereThis,equalsThis)                | array of objects  | Returns all objects who's given property equals the given value.
-app.getForm(form)                                    | object | Takes a DOM form element and returns an object where the input element ID\Names are the keys and their values are the values
+app.getForm(form)                                     | object | Takes a DOM form element and returns an object where the input element ID\Names are the keys and their values are the values
+app.getProfilePictureData                             | image data URL | Fetches the image data URL for the given user
 
 ### Advance functions in use
 
@@ -251,6 +252,10 @@ app.users.listAll();
 // Get all users where username="JohnDoe"
 app.search("username","JohnDoe");
 // Returns [{ username: "JohnDoe", password: "783jojo", email: "john@doe.com" }];
+
+// Assuming imageElement is a DOM element for an image. . .
+// The following code would change the source of the image to the profile picture set for JohnDoe
+imageElement.setAttribute("src",app.getProfilePictureData("JohnDoe"));
 
 // Delete all objects where username='JohnDoe'
 app.users.remove("username","JohnDoe")

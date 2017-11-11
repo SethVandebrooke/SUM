@@ -98,7 +98,7 @@ function $SUM(name,uid) {
         return app.users.get(app.uid,app.loggedInAs());
     };
     app.getProfilePictureData = function (uid) {
-        return localStorage.getItem(name + "-profilepic-" + uid);
+        return localStorage.getItem(name + "-profilepic-" + (!!uid?uid:app.loggedInAs()))||false;
     };
     app.getForm = function (form) { //returns an object of form elements with names (or IDs) as property names and the values of the elements as the values of the properties.
         var response = {};
