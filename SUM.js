@@ -1,4 +1,4 @@
-function $SUM(name,uid) {
+function $SUM(name,uid,loggedIn,loggedOut) {
     var app = this;
     app.name = name;
     app.uid = uid || "username";
@@ -115,6 +115,16 @@ function $SUM(name,uid) {
             }
         }
         return response;
+    };
+    if (!!document.querySelectorAll("html")[0].getAttribute("require-login")) {
+        if (!app.loggedIn()) {
+            window.location.href = !!loggedOut ? loggedOut : document.querySelectorAll("html")[0].getAttribute("require-login");
+        }
+    }
+    if (!!document.querySelectorAll("html")[0].getAttribute("logged-in")) {
+        if (app.loggedIn()) {
+            window.location.href = !!loggedIn ? loggedIn : document.querySelectorAll("html")[0].getAttribute("logged-in");
+        }
     }
 }
 
@@ -122,11 +132,6 @@ function $SUM(name,uid) {
 
 (function(w){
     var app = new $SUM("defaultApp");
-    if (!!document.querySelectorAll("html")[0].getAttribute("require-login")) {
-        if (!app.loggedIn()) {
-            window.location.href = document.querySelectorAll("html")[0].getAttribute("require-login");
-        }
-    }
     var forms = document.querySelectorAll("form");
     forms.forEach(function(e) {
         e.addEventListener("submit", function (e2) {
