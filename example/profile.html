@@ -129,15 +129,27 @@
 <body>
     <div class="container">
         <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-12">
-                <h1><username></username></h1>
-                <img alt="Profile Picture" class="img-responsive" style="max-width:200px;" profile-pic>
-                <p>Email: <email></email></p>
-                <button type="button" class="btn btn-danger" logout>Logout</button>
-                <br><br>
-                <input upload="profile-pic" />
-                <br>
+            <div class="col-xs-0 col-sm-0 col-md-4"></div>
+            <div class="col-xs-12 col-sm-12 col-md-4">
+                <div class="col-xs-12 col-sm-6 col-md-8">
+                    <img alt="Profile Picture" class="img-responsive" profile-pic>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-4">
+                    <h1>
+                        <username></username>
+                    </h1>
+                    <p>Email:
+                        <email></email>
+                    </p>
+                    <input upload="profile-pic" />
+                    <br>
+                    <button type="button" class="btn btn-danger" logout>Logout</button>
+                    <br>
+                </div>
             </div>
+        </div>
+        <br><br>
+        <div class="row">
             <p>Update user info: </p>
             <form id="update-form" role="form" type="update" on-success="profile.html">
                 <div class="form-group">
