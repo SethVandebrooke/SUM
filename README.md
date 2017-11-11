@@ -4,6 +4,7 @@ Serverless, Painless, Codeless user implimentation (optionally)
 ## Contents
 - [Getting Started](#getting-started)
 - [Using SUM in HTML](#using-sum-in-html)
+  - [Example HTML](#example-html)
 - [SUM API](#sum-api)
   - [Basic Functions](#basic-functions)
   - [Example Code](#example-code)
@@ -135,28 +136,27 @@ app.currentUser()                           | object            | Returns the us
 
 ### Example code
 
+#### Register
 ```js
 app.register({
     username: "JohnDoe",
     password: "783jojo",
     email: "joe@doe.com"
-}, function (data) { // Data is the user object that was passed to the register function
+}, function (data, message) { // Data is the user object that was passed to the register function
    alert("Welcome "+data.username+"!");
-}, function (data) {
-   alert("Oh no something went wrong!");
+}, function (data, message) {
+   alert("Oh no something went wrong: "+message);
 });
 ```
-
+#### Update
 ```js
 app.update({
     email: "john@doe.com" // change email to 'john@doe.com'
 }, function (data) { // Data is the user object that was passed to the update function
    alert("Your email was changed to "+data.email+"!");
-}, function (data) {
-   alert("Oh no something went wrong!");
 });
 ```
-
+#### Login
 ```js
 app.login({
     username: "JohnDoe", // Replace username with whatever is set as the uid (required)
@@ -230,4 +230,3 @@ app.users.remove("username","JohnDoe")
 
 ```
 
-More documentation is on the way...
