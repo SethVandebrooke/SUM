@@ -1,6 +1,8 @@
 # SUM - Serverless User Management
 Serverless, Painless, Codeless user implimentation
 
+### What is it? ...and what does it do?
+
  - SUM makes prototyping web/hybrid applications of any kind quick and painless without taking up hardly any space (it's only 9 Kb minified).
  - SUM works anywhere and everywhere: electron (windows, mac, linux), cordova (android, ios, etc...), and browsers alike.
  - SUM focuses on making signing in, logging in, logging out, viewing and updating user data easier than making the UI itself.
@@ -9,10 +11,10 @@ Serverless, Painless, Codeless user implimentation
  - SUM user data persists across multiple pages.
  - SUM redirects to the login page if the user isn't logged in, but only when you want it to.
 
-Why use SUM? 
+Why should I use it?
  1. Because it SUMs up user management for your prototypes, so that it is ACTUALLY worth it to add behavior to a prototype you're probably going to through away.
- 2. OR maybe you're making an offline application that just needs to handle user prefereces.
- 3. Better yet, you already made your offline application and you simply want multi user functionality without making entire backend!
+ 2. OR maybe you're making an offline application that just needs to handle user prefereces. Better yet, you already made your offline application and you simply want multi user functionality without making entire backend!
+ 3. It integrates with whatever MVC or MVVM library you use!
 
 # Getting Started
 
