@@ -1,12 +1,21 @@
 # SUM - Serverless User Management
 Serverless, Painless, Codeless user implimentation (optionally)
 
+## Contents
+- [Getting Started](#getting-started)
+- [Using SUM in HTML](#using-sum-in-html)
+- [SUM API](#sum-api)
+  - [Basic Functions](#basic-functions)
+  - [Example Code](#example-code)
+- [Advance Functions](#advance-functions)
+  - [Advance Functions In Use](#advance-functions-in-use)
+
 ### What is it? ...and what does it do?
 
  - SUM makes prototyping web/hybrid applications of any kind quick and painless without taking up hardly any space (it's only 9 Kb minified).
  - SUM works anywhere and everywhere: electron (windows, mac, linux), cordova (android, ios, etc...), and browsers alike.
  - SUM focuses on making signing in, logging in, logging out, viewing and updating user data easier than making the UI itself.
- - SUM requires no configuration. Just plug and play right out of the box! You don't even have to touch the javascript if you don't want to!
+ - SUM requires no configuration. Just plug and play right out of the box! You don't even have to touch the JavaScript if you don't want to!
  - SUM is fully extendable! It's built with a simple API that gives you full control over its capabilities.
  - SUM user data persists across multiple pages.
  - SUM redirects to the login page if the user isn't logged in, but only when you want it to.
@@ -58,9 +67,49 @@ To display user information simply use the id or name that you used in the form 
  
  If you only want users to be able to view a page if they are logged in, then use the following attribute in the html tag:
  ```html
-<html force-login="login.html">
+<html require-login="login.html">
  ```
  Simply use 'force-login' to specify where to go to login and if the viewer isn't logged in then it will automatically redirect to that page.
+ 
+## Example HTML
+
+The following form is completely functional because of the form attributes: type, uid, and on-success.
+Granted, the form would technically even work without the on-success attribute... but you wouldn't know if it's working when you submit the form. 
+(Remember: password is a required field)
+```html
+<form type="signup" uid="username" on-success="profile.html">
+  <input type="text" name="username" id="username" placeholder="Username" value="">
+  <input type="email" name="email" id="email" placeholder="Email Address" value="">
+  <input type="password" name="password" id="password" placeholder="Password">
+  <input type="submit" name="register-submit" id="register-submit" value="Register Now">
+</form>
+```
+Whatever id/names are used in the signup form will be used throughout your application.
+For example, if you want to display any user data you will need to use exactly those ids or names as html tags:
+```html
+<username></username>
+<email></email>
+```
+And in order for the user to log in, you must use the uid specified in the signup form and password:
+```html
+<form type="login" on-success="profile.html">
+  <input type="text" name="username" id="username" placeholder="Username" value="">
+  <input type="password" name="password" id="password" placeholder="Password">
+  <input type="submit" name="register-submit" id="register-submit" value="Register Now">
+</form>
+```
+Logging out is stupid easy... just add "logout" as an attribute to any element and when it is clicked it will logout and redirect to the given URL. If no URL is given, it will redirect to ./index.html.
+```html
+<button logout="logout.html">Logout</button>
+ ```
+ The update form type autofills whatever fields you give it with the current user information.
+ ```html
+<form type="update" on-success="profile.html">
+  <input type="text" name="username" id="username" placeholder="Username" value="">
+  <input type="password" name="password" id="password" placeholder="Password">
+  <input type="submit" name="register-submit" id="register-submit" value="Register Now">
+</form>
+```
 
 # SUM API
 
@@ -129,5 +178,56 @@ app.users.get(whereThis,equalsThis)                   | object            | Retu
 app.users.listAll()                                   | array of objects  | Returns all stored objects in the dataSection
 app.users.search(whereThis,equalsThis)                | array of objects  | Returns all objects who's given property equals the given value.
 app.getForm(form)                                    | object | Takes a DOM form element and returns an object where the input element ID\Names are the keys and their values are the values
+
+### Advance functions in use
+
+Assume you have a form like this:
+```html
+<form id="register-form">
+<input type="text" name="username" id="username" placeholder="Username" value="">
+<input type="email" name="email" id="email"placeholder="Email Address" value="">
+<input type="password" name="password" id="password" placeholder="Password">
+<input type="password" name="confirm-password" id="confirm-password"placeholder="Confirm Password">
+<input type="submit" name="register-submit" id="register-submit" value="Register Now">
+</form>
+```
+The following JS would work:
+```js
+var formObject = app.getForm(document.getElementById("register-form"));
+
+//Depending on what the user enters into the form, the object will look something like:
+//{
+//    username: "JohnDoe",
+//    password: "783jojo",
+//    email: "joe@doe.com"
+//};
+
+// Add a user with the following object
+app.users.add({
+    username: "JohnDoe",
+    password: "783jojo",
+    email: "joe@doe.com"
+});
+// The above would be the same as app.users.add(formObject); 
+
+// Where username='JohnDoe' change email to 'john@doe.com'
+app.users.edit("username","JohnDoe","email","john@doe.com");
+
+// Get the user where the username='JohnDoe'
+app.users.get("username","JohnDoe");
+//Returns: { username: "JohnDoe", password: "783jojo", email: "john@doe.com" }
+
+// Get all users
+app.users.listAll();
+// Returns [{ username: "JohnDoe", password: "783jojo", email: "john@doe.com" }];
+
+// Get all users where username="JohnDoe"
+app.search("username","JohnDoe");
+// Returns [{ username: "JohnDoe", password: "783jojo", email: "john@doe.com" }];
+
+// Delete all objects where username='JohnDoe'
+app.users.remove("username","JohnDoe")
+
+```
 
 More documentation is on the way...
