@@ -1,5 +1,5 @@
 # SUM - Serverless User Management
-Serverless, Painless, Codeless user implimentation (optionally)
+Serverless, Painless, Seamless
 
 ## Contents
 - [Getting Started](#getting-started)
