@@ -1,4 +1,4 @@
-function $SUM(name,uid,loggedIn,loggedOut) {
+function SUM(name,uid,loggedIn,loggedOut) {
     var app = this;
     app.name = name;
     app.uid = uid || "username";
@@ -131,33 +131,25 @@ function $SUM(name,uid,loggedIn,loggedOut) {
 // HTML implementation
 
 (function(w){
-    var app = new $SUM("defaultApp");
+    var app = new SUM("defaultApp");
     var forms = document.querySelectorAll("form");
     forms.forEach(function(e) {
         var formData = app.getForm(e);
+        var formType = e.getAttribute("type");
         e.addEventListener("submit", function (e2) {
             var id = e.getAttribute("uid");
             if (id != null) {
                 app.uid = id;
                 localStorage.setItem("uid", id);
             }
-            if (e.getAttribute("type")==="login") {
+            if (formType==="login" || formType==="update") {
                 e2.preventDefault();
-                app.login(
+                app[formType](
                     formData,
                     e.getAttribute("on-success") || window.location.href,
                     e.getAttribute("on-fail") || window.location.href
                 );
-            }
-            if (e.getAttribute("type") === "signup") {
-                e2.preventDefault();
-                app.register(
-                    formData,
-                    e.getAttribute("on-success") || window.location.href,
-                    e.getAttribute("on-fail") || window.location.href
-                );
-            }
-            if (e.getAttribute("type") === "update") {
+            } else if (formType === "update") {
                 e2.preventDefault();
                 app.update(
                     formData,
@@ -166,7 +158,7 @@ function $SUM(name,uid,loggedIn,loggedOut) {
                 );
             }
         });
-        if (e.getAttribute("type") === "update") {
+        if (formType === "update") {
             var user = app.currentUser();
             for (var k in user) {
                 e.querySelectorAll("#"+k+", [name='"+k+"']").forEach(function (a) {
@@ -181,7 +173,7 @@ function $SUM(name,uid,loggedIn,loggedOut) {
     var logout = document.querySelectorAll("[logout]");
     logout.forEach(function (e) {
         e.addEventListener("click", function(e2) {
-            app.logout(e.getAttribute("logout")||"index.html");
+            app.logout(e.getAttribute("logout")||window.location.href);
         });
     });
     // Dynamic html tags
@@ -202,7 +194,7 @@ function $SUM(name,uid,loggedIn,loggedOut) {
         var reader = new FileReader();
         reader.onload = function () {
             var dataURL = reader.result;
-            localStorage.setItem(app.name + "-profilepic-" + app.loggedInAs(), dataURL);
+            localStorage.setItem(app.name + "-profilepic-" + app.loggedInAs(), dataURL); // Save image in localStorage
             //Update profile pics
             var pics = document.querySelectorAll("[profile-pic]");
             pics.forEach(function(e){
@@ -227,7 +219,6 @@ function $SUM(name,uid,loggedIn,loggedOut) {
             )
         );
     });
-    
-    // Uncomment the line of code below to make app a global variable
-    w.app = app;
+    // Uncomment the line of code below to make app a global variable (For Debugging)
+    // w.app = app;
 })(window);
