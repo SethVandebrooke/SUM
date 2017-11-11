@@ -8,12 +8,12 @@ function $SUM(name,uid) {
         var Sha256 = function () { function r() { } return r.hash = function (n, t) { function e(r) { try { return (new TextEncoder).encode(r, "utf-8").reduce(function (r, n) { return r + String.fromCharCode(n) }, "") } catch (n) { return unescape(encodeURIComponent(r)) } } function o(r) { var n = r.replace(" ", ""); return "" == n ? "" : n.match(/.{2}/g).map(function (r) { return String.fromCharCode(parseInt(r, 16)) }).join("") } var a = { msgFormat: "string", outFormat: "hex" }, u = Object.assign(a, t); switch (u.msgFormat) { default: case "string": n = e(n); break; case "hex-bytes": n = o(n) }var c = [1116352408, 1899447441, 3049323471, 3921009573, 961987163, 1508970993, 2453635748, 2870763221, 3624381080, 310598401, 607225278, 1426881987, 1925078388, 2162078206, 2614888103, 3248222580, 3835390401, 4022224774, 264347078, 604807628, 770255983, 1249150122, 1555081692, 1996064986, 2554220882, 2821834349, 2952996808, 3210313671, 3336571891, 3584528711, 113926993, 338241895, 666307205, 773529912, 1294757372, 1396182291, 1695183700, 1986661051, 2177026350, 2456956037, 2730485921, 2820302411, 3259730800, 3345764771, 3516065817, 3600352804, 4094571909, 275423344, 430227734, 506948616, 659060556, 883997877, 958139571, 1322822218, 1537002063, 1747873779, 1955562222, 2024104815, 2227730452, 2361852424, 2428436474, 2756734187, 3204031479, 3329325298], f = [1779033703, 3144134277, 1013904242, 2773480762, 1359893119, 2600822924, 528734635, 1541459225]; n += String.fromCharCode(128); for (var i = n.length / 4 + 2, h = Math.ceil(i / 16), R = new Array(h), g = 0; h > g; g++) { R[g] = new Array(16); for (var s = 0; 16 > s; s++)R[g][s] = n.charCodeAt(64 * g + 4 * s + 0) << 24 | n.charCodeAt(64 * g + 4 * s + 1) << 16 | n.charCodeAt(64 * g + 4 * s + 2) << 8 | n.charCodeAt(64 * g + 4 * s + 3) << 0 } var v = 8 * (n.length - 1) / Math.pow(2, 32), C = 8 * (n.length - 1) >>> 0; R[h - 1][14] = Math.floor(v), R[h - 1][15] = C; for (var g = 0; h > g; g++) { for (var d = new Array(64), m = 0; 16 > m; m++)d[m] = R[g][m]; for (var m = 16; 64 > m; m++)d[m] = r.a1(d[m - 2]) + d[m - 7] + r.a0(d[m - 15]) + d[m - 16] >>> 0; for (var O = f[0], T = f[1], l = f[2], w = f[3], A = f[4], p = f[5], j = f[6], y = f[7], m = 0; 64 > m; m++) { var M = y + r.a1(A) + r.Ch(A, p, j) + c[m] + d[m], S = r.a0(O) + r.Maj(O, T, l); y = j, j = p, p = A, A = w + M >>> 0, w = l, l = T, T = O, O = M + S >>> 0 } f[0] = f[0] + O >>> 0, f[1] = f[1] + T >>> 0, f[2] = f[2] + l >>> 0, f[3] = f[3] + w >>> 0, f[4] = f[4] + A >>> 0, f[5] = f[5] + p >>> 0, f[6] = f[6] + j >>> 0, f[7] = f[7] + y >>> 0 } for (var y = 0; y < f.length; y++)f[y] = ("00000000" + f[y].toString(16)).slice(-8); var x = "hex-w" == u.outFormat ? " " : ""; return f.join(x) }, r.ROTR = function (r, n) { return n >>> r | n << 32 - r }, r.a0 = function (n) { return r.ROTR(2, n) ^ r.ROTR(13, n) ^ r.ROTR(22, n) }, r.a1 = function (n) { return r.ROTR(6, n) ^ r.ROTR(11, n) ^ r.ROTR(25, n) }, r.a0 = function (n) { return r.ROTR(7, n) ^ r.ROTR(18, n) ^ n >>> 3 }, r.a1 = function (n) { return r.ROTR(17, n) ^ r.ROTR(19, n) ^ n >>> 10 }, r.Ch = function (r, n, t) { return r & n ^ ~r & t }, r.Maj = function (r, n, t) { return r & n ^ r & t ^ n & t }, r }();
         return new Sha256().__proto__.constructor.hash(str);
     }
-    function react(reaction, data) {
+    function react(reaction, data, message) {
         if (reaction) {
             if (typeof reaction == "string") {
                 window.location.href = reaction;
             } else if (typeof reaction == "function") {
-                reaction(data);
+                reaction(data, message);
             }
         }
     }
@@ -31,16 +31,16 @@ function $SUM(name,uid) {
                     data.password = hash(data.password)
                     app.users.add(data);
                     sessionStorage.setItem(name + "-current-user", data[app.uid]);
-                    done(data);
+                    react(done, data);
                 } else {
-                    fail(data, "That "+app.uid+" is already in use!");
+                    react(fail, data, "That "+app.uid+" is already in use!");
                 }
             } else {
-                fail(data, "Invalid submission. Password required.");
+                react(fail, data, "Invalid submission. Password required.");
                 throw new Error(name+" -> Register: 'password' is a required property");
             }
         } else {
-            fail(data, "Invalid submission. "+app.uid+" required.");
+            react(fail, data, "Invalid submission. "+app.uid+" required.");
             throw new Error(name+" -> Register: "+app.uid+" must be defined.")
         }
     };
@@ -52,7 +52,7 @@ function $SUM(name,uid) {
                 app.users.edit(app.uid, id, k, data[k]);
             }
         }
-        react(finished, data);
+        react(finished, data, "Successfully updated user!");
     };
     app.auth = function (data, done, fail) {
         if (data[app.uid]) {
@@ -61,26 +61,26 @@ function $SUM(name,uid) {
                     if (app.users.get(app.uid,data[app.uid]).password==hash(data.password)) {
                         react(done, data);
                     } else {
-                        fail(data, "Incorrect password!");
+                        react(fail, data, "Incorrect password!");
                     }
                 } else {
-                    fail(data, "User does not exist!");
+                    react(fail, data, "User does not exist!");
                 }
             } else {
-                fail(data, "Invalid authentication attempt. Password required.");
+                react(fail, data, "Invalid authentication attempt. Password required.");
                 throw new Error(name + " -> Auth: 'password' is a required property");
             }
         } else {
-            fail(data, "Invalid authentication attempt. " + app.uid + " required.");
+            react(fail, data, "Invalid authentication attempt. " + app.uid + " required.");
             throw new Error(name + " -> Auth: " + app.uid + " must be defined.")
         }
     };
     app.login = function (data, done, fail) {
         app.auth(data, function(data){
             sessionStorage.setItem(name+"-current-user",data[app.uid]);
-            react(done, data);
-        }, function(data){
-            react(fail, data);
+            react(done, data, "Login successfull!");
+        }, function(data) {
+            react(fail, data, "Login failed!");
         });
     };
     app.logout = function (done) {
@@ -118,9 +118,9 @@ function $SUM(name,uid) {
 
 (function(w){
     var app = new $SUM("defaultApp");
-    if (document.querySelectorAll("html")[0].getAttribute("force-login")?true:false) {
+    if (!!document.querySelectorAll("html")[0].getAttribute("require-login")) {
         if (!app.loggedIn()) {
-            window.location.href = document.querySelectorAll("html")[0].getAttribute("force-login");
+            window.location.href = document.querySelectorAll("html")[0].getAttribute("require-login");
         }
     }
     var forms = document.querySelectorAll("form");
@@ -190,5 +190,5 @@ function $SUM(name,uid) {
         });
     }
     // Uncomment the line of code below to make app a global variable
-    // w.app = app;
+    w.app = app;
 })(window);
