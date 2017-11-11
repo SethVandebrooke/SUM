@@ -5,6 +5,10 @@ Serverless, Painless, Seamless
 - [Getting Started](#getting-started)
 - [Using SUM in HTML](#using-sum-in-html)
   - [Example HTML](#example-html)
+  - [SUM forms](#sum-forms)
+  - [Displaying User Information](#display-user-information)
+  - [Requiring Login](#require-login)
+  - [Profile Pictures](#profile-pictures)
 - [SUM API](#sum-api)
   - [Basic Functions](#basic-functions)
   - [Example Code](#example-code)
@@ -44,6 +48,10 @@ Oh wait, that was one step.
 
 # Using SUM in HTML
 
+SUM was made to be used fully within HTML, so no functionality is lost by ignoring the JavaScript code.
+
+### SUM Forms
+
 Forms only requires 3 attributes and 1 input to become fully functional.
 
 Type: must be login, signup, or update.
@@ -59,13 +67,15 @@ Other than that, have at it.
 ```
 If the type is set to update than the fields will be prefilled with the current logged in user information (Note: it will not prefill the password field).
 
+### Display User Information
+
 To display user information simply use the id or name that you used in the form as a tag e.g.
  ```html
  <username></username>
  <email></email>
  ```
  Note: if you try to display the users password it will appear as a hash, because that's what's being stored.
- 
+ ### Require Login
  If you only want users to be able to view a page if they are logged in, then use the following attribute in the html tag:
  ```html
 <html require-login="login.html">
@@ -73,6 +83,8 @@ To display user information simply use the id or name that you used in the form 
  Simply use 'force-login' to specify where to go to login and if the viewer isn't logged in then it will automatically redirect to that page.
  
  You can also upload and display profile pictures:
+ 
+ ### Profile Pictures
  ```html
  <img alt="Profile Picture" profile-pic> <!--profile-pic is all that is required-->
  <input upload="profile-pic" /> <!--upload='profile-pic' is all that is required-->
