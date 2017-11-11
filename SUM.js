@@ -1,5 +1,6 @@
 function $SUM(name,uid) {
     var app = this;
+    app.name = name;
     app.uid = uid || "username";
     if (localStorage.getItem("uid") != null) {
         app.uid = localStorage.getItem("uid");
@@ -96,6 +97,9 @@ function $SUM(name,uid) {
     app.currentUser = function () {
         return app.users.get(app.uid,app.loggedInAs());
     };
+    app.getProfilePictureData = function (uid) {
+        return localStorage.getItem(name + "-profilepic-" + uid);
+    };
     app.getForm = function (form) { //returns an object of form elements with names (or IDs) as property names and the values of the elements as the values of the properties.
         var response = {};
         var elements = form.elements;
@@ -175,12 +179,14 @@ function $SUM(name,uid) {
             }
         }
     });
+    // Logout elements
     var logout = document.querySelectorAll("[logout]");
     logout.forEach(function (e) {
         e.addEventListener("click", function(e2) {
-            app.logout(e.getAttribute("logout"));
+            app.logout(e.getAttribute("logout")||"index.html");
         });
     });
+    // Dynamic html tags
     var user = app.currentUser();
     for (var k in user) {
         var elem = document.querySelectorAll(k);
@@ -189,6 +195,41 @@ function $SUM(name,uid) {
             e.innerHTML = user[k];
         });
     }
+    // Upload Profile Picture
+    var uploaders = document.querySelectorAll("[upload='profile-pic']");
+    //HTML: <input type="file" accept="image/*" onchange="uploadProfilePic('ImageTagId',event,"username","userAccountSystemName");">
+    //This function uploads an image and saves it as the profile picture for the user that is logged in, and then it sets an image tag to the profile picture (in order to update the current profile picture)
+    var uploadProfilePic = function (event) {
+        var input = event.target;
+        var reader = new FileReader();
+        reader.onload = function () {
+            var dataURL = reader.result;
+            localStorage.setItem(app.name + "-profilepic-" + app.loggedInAs(), dataURL);
+            //Update profile pics
+            var pics = document.querySelectorAll("[profile-pic]");
+            pics.forEach(function(e){
+                e.setAttribute("src",dataURL);
+            });
+        };
+        reader.readAsDataURL(input.files[0]);
+    };
+    uploaders.forEach(function(e){
+        e.setAttribute("type","file");
+        e.setAttribute("accept","image/*");
+        e.addEventListener("change", function (event){
+            uploadProfilePic(event);
+        });
+    });
+    // Display Profile Picture
+    var pics = document.querySelectorAll("[profile-pic]");
+    pics.forEach(function (e) {
+        e.setAttribute("src", 
+            app.getProfilePictureData(
+                !!e.getAttribute("profile-pic") ? e.getAttribute("profile-pic") : app.loggedInAs()
+            )
+        );
+    });
+    
     // Uncomment the line of code below to make app a global variable
     w.app = app;
 })(window);
