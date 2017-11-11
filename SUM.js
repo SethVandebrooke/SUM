@@ -30,6 +30,7 @@ function $SUM(name,uid) {
                 if (!app.users.exists(app.uid, data[app.uid])) {
                     data.password = hash(data.password)
                     app.users.add(data);
+                    sessionStorage.setItem(name + "-current-user", data[app.uid]);
                     done(data);
                 } else {
                     fail(data, "That "+app.uid+" is already in use!");
@@ -123,7 +124,7 @@ function $SUM(name,uid) {
         }
     }
     var forms = document.querySelectorAll("form");
-    forms.forEach(e => {
+    forms.forEach(function(e) {
         e.addEventListener("submit", function (e2) {
             if (e.getAttribute("type")==="login") {
                 e2.preventDefault();
@@ -166,7 +167,7 @@ function $SUM(name,uid) {
         if (e.getAttribute("type") === "update") {
             var user = app.currentUser();
             for (var k in user) {
-                e.querySelectorAll("#"+k+", [name='"+k+"']").forEach(a => {
+                e.querySelectorAll("#"+k+", [name='"+k+"']").forEach(function (a) {
                     if (k != "password") {
                         a.setAttribute("value",user[k]);
                     }
@@ -175,7 +176,7 @@ function $SUM(name,uid) {
         }
     });
     var logout = document.querySelectorAll("[logout]");
-    logout.forEach(e => {
+    logout.forEach(function (e) {
         e.addEventListener("click", function(e2) {
             app.logout(e.getAttribute("logout"));
         });
@@ -184,7 +185,7 @@ function $SUM(name,uid) {
     for (var k in user) {
         var elem = document.querySelectorAll(k);
         console.log("element: ", elem);
-        elem.forEach(e => {
+        elem.forEach(function (e){
             e.innerHTML = user[k];
         });
     }
