@@ -72,6 +72,21 @@ To display user information simply use the id or name that you used in the form 
  ```
  Simply use 'force-login' to specify where to go to login and if the viewer isn't logged in then it will automatically redirect to that page.
  
+ You can also upload and display profile pictures:
+ ```html
+ <img alt="Profile Picture" profile-pic> <!--profile-pic is all that is required-->
+ <input upload="profile-pic" /> <!--upload='profile-pic' is all that is required-->
+ ```
+ That's it. That's all you need for the input element to fully function.
+ The input becomes a file type input element and updates all affected profile pictures when a picture is uploaded.
+ The image will automatically load the profile picture for the user that is logged in if profile-pic is undefined.
+ If you set profile-pic to a uid than the image will render the profile picture for that user:
+ 
+ ```html
+ <img alt="Profile Picture" profile-pic="JohnDoe"> <!--profile-pic is all that is required-->
+ ``` 
+This is useful if you want to display the profile picture of a given user that is not logged in.
+ 
 ## Example HTML
 
 The following form is completely functional because of the form attributes: type, uid, and on-success.
