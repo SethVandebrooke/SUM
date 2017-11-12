@@ -25,7 +25,7 @@ function SUM(name,uid,loggedIn,loggedOut) {
             { set: function (a, b) { return localStorage.setItem(a, b); }, get: function (a) { return localStorage.getItem(a); } }
         );
     })();
-    app.register = function (data, done, fail) {
+    app.signup = function (data, done, fail) {
         if (data[app.uid]) {
             if (data.password) {
                 if (!app.users.exists(app.uid, data[app.uid])) {
@@ -100,6 +100,10 @@ function SUM(name,uid,loggedIn,loggedOut) {
     app.getProfilePictureData = function (uid) {
         return localStorage.getItem(name + "-profilepic-" + (!!uid?uid:app.loggedInAs()))||false;
     };
+    app.reset = function () {
+        localStorage.clear();
+        window.location.href = window.location.href;
+    };
     app.getForm = function (form) { //returns an object of form elements with names (or IDs) as property names and the values of the elements as the values of the properties.
         var response = {};
         var elements = form.elements;
@@ -111,11 +115,105 @@ function SUM(name,uid,loggedIn,loggedOut) {
                 if (!elements[i].tagName == "INPUT" && !elements[i].type == "submit") {
                     elements[i].value = "";
                 }
-                response[title] = val;
+                if (title.toLowerCase().replace("submit","")===title.toLowerCase() &&
+                    title.toLowerCase().replace("confirm","")===title.toLowerCase()) {
+                    response[title] = val;
+                }
             }
         }
         return response;
     };
+    app.run = function () {
+        var forms = document.querySelectorAll("form");
+        forms.forEach(function (e) {
+            console.log(e);
+            var formType = e.getAttribute("type");
+            e.addEventListener("submit", function (e2) {
+                var formData = app.getForm(e);
+                var id = e.getAttribute("uid");
+                if (id != null) {
+                    app.uid = id;
+                    localStorage.setItem("uid", id);
+                }
+                if (formType === "login" || formType === "signup") {
+                    e2.preventDefault();
+                    console.log("Submitting form", formType, formData);
+                    app[formType](
+                        formData,
+                        e.getAttribute("on-success") || window.location.href,
+                        e.getAttribute("on-fail") || window.location.href
+                    );
+                } else if (formType === "update") {
+                    e2.preventDefault();
+                    app.update(
+                        formData,
+                        app.loggedInAs(),
+                        e.getAttribute("on-success") || window.location.href
+                    );
+                }
+            });
+            if (formType === "update") { //Prefill update form
+                var user = app.currentUser();
+                for (var k in user) {
+                    e.querySelectorAll("#" + k + ", [name='" + k + "']").forEach(function (a) {
+                        if (k != "password") {
+                            a.setAttribute("value", user[k]);
+                        }
+                    });
+                }
+            }
+        });
+        // Logout elements
+        var logout = document.querySelectorAll("[logout]");
+        logout.forEach(function (e) {
+            e.addEventListener("click", function (e2) {
+                app.logout(e.getAttribute("logout") || window.location.href);
+            });
+        });
+        // Dynamic html tags
+        var user = app.currentUser();
+        for (var k in user) {
+            var elem = document.querySelectorAll(k);
+            console.log("element: ", elem);
+            elem.forEach(function (e) {
+                e.innerHTML = user[k];
+            });
+        }
+        // Upload Profile Picture
+        var uploaders = document.querySelectorAll("[upload='profile-pic']");
+        //HTML: <input type="file" accept="image/*" onchange="uploadProfilePic('ImageTagId',event,"username","userAccountSystemName");">
+        //This function uploads an image and saves it as the profile picture for the user that is logged in, and then it sets an image tag to the profile picture (in order to update the current profile picture)
+        var uploadProfilePic = function (event) {
+            var input = event.target;
+            var reader = new FileReader();
+            reader.onload = function () {
+                var dataURL = reader.result;
+                localStorage.setItem(app.name + "-profilepic-" + app.loggedInAs(), dataURL); // Save image in localStorage
+                //Update profile pics
+                var pics = document.querySelectorAll("[profile-pic]");
+                pics.forEach(function (e) {
+                    e.setAttribute("src", dataURL);
+                });
+            };
+            reader.readAsDataURL(input.files[0]);
+        };
+        uploaders.forEach(function (e) {
+            e.setAttribute("type", "file");
+            e.setAttribute("accept", "image/*");
+            e.addEventListener("change", function (event) {
+                uploadProfilePic(event);
+            });
+        });
+        // Display Profile Picture
+        var pics = document.querySelectorAll("[profile-pic]");
+        pics.forEach(function (e) {
+            e.setAttribute("src",
+                app.getProfilePictureData(
+                    !!e.getAttribute("profile-pic") ? e.getAttribute("profile-pic") : app.loggedInAs()
+                )
+            );
+        });
+    }
     if (!!document.querySelectorAll("html")[0].getAttribute("require-login")) {
         if (!app.loggedIn()) {
             window.location.href = !!loggedOut ? loggedOut : document.querySelectorAll("html")[0].getAttribute("require-login");
@@ -128,97 +226,13 @@ function SUM(name,uid,loggedIn,loggedOut) {
     }
 }
 
-// HTML implementation
-
+// Automatic HTML implementation
+var auto = true;
 (function(w){
-    var app = new SUM("defaultApp");
-    var forms = document.querySelectorAll("form");
-    forms.forEach(function(e) {
-        var formData = app.getForm(e);
-        var formType = e.getAttribute("type");
-        e.addEventListener("submit", function (e2) {
-            var id = e.getAttribute("uid");
-            if (id != null) {
-                app.uid = id;
-                localStorage.setItem("uid", id);
-            }
-            if (formType==="login" || formType==="update") {
-                e2.preventDefault();
-                app[formType](
-                    formData,
-                    e.getAttribute("on-success") || window.location.href,
-                    e.getAttribute("on-fail") || window.location.href
-                );
-            } else if (formType === "update") {
-                e2.preventDefault();
-                app.update(
-                    formData,
-                    app.loggedInAs(),
-                    e.getAttribute("on-success") || window.location.href
-                );
-            }
-        });
-        if (formType === "update") {
-            var user = app.currentUser();
-            for (var k in user) {
-                e.querySelectorAll("#"+k+", [name='"+k+"']").forEach(function (a) {
-                    if (k != "password") {
-                        a.setAttribute("value",user[k]);
-                    }
-                });
-            }
-        }
-    });
-    // Logout elements
-    var logout = document.querySelectorAll("[logout]");
-    logout.forEach(function (e) {
-        e.addEventListener("click", function(e2) {
-            app.logout(e.getAttribute("logout")||window.location.href);
-        });
-    });
-    // Dynamic html tags
-    var user = app.currentUser();
-    for (var k in user) {
-        var elem = document.querySelectorAll(k);
-        console.log("element: ", elem);
-        elem.forEach(function (e){
-            e.innerHTML = user[k];
-        });
+    if (auto) {
+        var app = new SUM("defaultApp"); // Init app
+        app.run(); // Run SUM
+        // Uncomment the line of code below to make 'app' a global variable (For Debugging)
+        w.app = app;
     }
-    // Upload Profile Picture
-    var uploaders = document.querySelectorAll("[upload='profile-pic']");
-    //HTML: <input type="file" accept="image/*" onchange="uploadProfilePic('ImageTagId',event,"username","userAccountSystemName");">
-    //This function uploads an image and saves it as the profile picture for the user that is logged in, and then it sets an image tag to the profile picture (in order to update the current profile picture)
-    var uploadProfilePic = function (event) {
-        var input = event.target;
-        var reader = new FileReader();
-        reader.onload = function () {
-            var dataURL = reader.result;
-            localStorage.setItem(app.name + "-profilepic-" + app.loggedInAs(), dataURL); // Save image in localStorage
-            //Update profile pics
-            var pics = document.querySelectorAll("[profile-pic]");
-            pics.forEach(function(e){
-                e.setAttribute("src",dataURL);
-            });
-        };
-        reader.readAsDataURL(input.files[0]);
-    };
-    uploaders.forEach(function(e){
-        e.setAttribute("type","file");
-        e.setAttribute("accept","image/*");
-        e.addEventListener("change", function (event){
-            uploadProfilePic(event);
-        });
-    });
-    // Display Profile Picture
-    var pics = document.querySelectorAll("[profile-pic]");
-    pics.forEach(function (e) {
-        e.setAttribute("src", 
-            app.getProfilePictureData(
-                !!e.getAttribute("profile-pic") ? e.getAttribute("profile-pic") : app.loggedInAs()
-            )
-        );
-    });
-    // Uncomment the line of code below to make app a global variable (For Debugging)
-    // w.app = app;
 })(window);
