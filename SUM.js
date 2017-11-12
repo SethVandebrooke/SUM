@@ -97,6 +97,15 @@ function SUM(name,uid,loggedIn,loggedOut) {
     app.currentUser = function () {
         return app.users.get(app.uid,app.loggedInAs());
     };
+    app.deleteUserAccount = function (data, done, fail) {
+        app.auth(data, function (data) {
+            sessionStorage.setItem(name + "-current-user", data[app.uid]);
+            app.users.remove(app.uid, data[app.uid]);
+            react(done, data, "User deleted!");
+        }, function (data) {
+            react(fail, data, "User does not exist!");
+        });
+    };
     app.getProfilePictureData = function (uid) {
         return localStorage.getItem(name + "-profilepic-" + (!!uid?uid:app.loggedInAs()))||false;
     };
