@@ -123,10 +123,18 @@ function SUM(name,uid,loggedIn,loggedOut) {
         }
         return response;
     };
+    app.parseURL = function() {
+        var url = window.location.href, data = {};
+        url = url.substring(url.indexOf("#")+1,url.length);
+        var kv = url.split("&");
+        kv.forEach(function(e){
+            data[e.split("=")[0]] = e.split("=")[1];
+        });
+        return kv[0].split("=").length > 1 ? data : url;
+    }
     app.run = function () {
         var forms = document.querySelectorAll("form");
         forms.forEach(function (e) {
-            console.log(e);
             var formType = e.getAttribute("type");
             e.addEventListener("submit", function (e2) {
                 var formData = app.getForm(e);
