@@ -219,7 +219,7 @@ Assume you have a form like this:
 <input type="submit" name="register-submit" id="register-submit" value="Register Now">
 </form>
 ```
-The following JS would work:
+Examples:
 ```js
 var formObject = app.getForm(document.getElementById("register-form"));
 
@@ -261,4 +261,3 @@ imageElement.setAttribute("src",app.getProfilePictureData("JohnDoe"));
 app.users.remove("username","JohnDoe")
 
 ```
-
