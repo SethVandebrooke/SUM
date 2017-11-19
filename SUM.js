@@ -14,24 +14,101 @@ function SUM(name,uid,loggedIn,loggedOut) {
             if (typeof reaction == "string") {
                 window.location.href = reaction;
             } else if (typeof reaction == "function") {
-                reaction(data, message);
+                var response = {data:data, message: message};
+                reaction(response);
             }
         }
     }
+    app.extentions = null;
     app.users = (function(){
-        function dataGroup(name, KVPS) { if (this.dataSystem = KVPS, this.name = name, null == this.dataSystem.get(name)) { var setup = new Array; this.dataSystem.set(name, JSON.stringify(setup)) } this.debug = !1, this.add = function (e) { var t = JSON.parse(this.dataSystem.get(this.name)); t.push(e), this.dataSystem.set(this.name, JSON.stringify(t)), this.debug === !0 && console.log(this.name + " -> add: Object successfully added!") }, this.exists = function (e, t) { var s = JSON.parse(this.dataSystem.get(this.name)); if (s.length > 0) { for (var o = 0; o < s.length; o++) { var n = s[o]; if (n[e] == t) return this.debug === !0 && console.log(this.name + " -> exists: returned true"), !0 } this.dataSystem.set(this.name, JSON.stringify(s)) } else this.debug === !0 && console.log(this.name + " -> exists: No objects are stored!") }, this.edit = function (e, t, s, o) { var n = JSON.parse(this.dataSystem.get(this.name)); if (n.length > 0) { for (var i = 0; i < n.length; i++) { var a = n[i]; a[e] == t && (this.debug === !0 && (console.log(this.name + " -> edit: Object before - "), console.log(a)), a[s] = o, this.debug === !0 && (console.log(this.name + " -> edit: Object after - "), console.log(a)), n[i] = a, this.debug === !0 && console.log(this.name + " -> edit: Object saved!")) } this.dataSystem.set(this.name, JSON.stringify(n)) } else this.debug === !0 && console.log(this.name + " -> edit: No objects are stored!") }, this.remove = function (e, t) { var s = JSON.parse(this.dataSystem.get(this.name)); if (s.length > 0) { for (var o = 0; o < s.length; o++) { var n = s[o]; n[e] == t && (this.debug === !0 && (console.log(this.name + " -> remove: Object matched for removal -"), console.log(n)), s.splice(o, 1), this.debug === !0 && console.log(this.name + " -> remove: Object deleted!")) } this.dataSystem.set(this.name, JSON.stringify(s)) } else this.debug === !0 && console.log(this.name + " -> remove: No objects are stored!") }, this.get = function (e, t) { for (var s = JSON.parse(this.dataSystem.get(this.name)), o = 0; o < s.length; o++) { var n = s[o]; if (n[e] == t) return this.debug === !0 && (console.log(this.name + " -> get: Object found! "), console.log(n)), n } return this.debug === !0 && console.log(this.name + " -> get: Object not found!"), s.length < 1 && this.debug === !0 && console.log(this.name + " -> get: No objects, with the property of " + e + ", matched " + t), null }, this.listAll = function () { var e = JSON.parse(this.dataSystem.get(this.name)); return e.length < 1 && this.debug === !0 && console.log(this.name + " -> listAll: There are no stored objects to return!"), this.debug === !0 && (console.log(this.name + " -> listAll: Objects were found!"), console.log(e)), e }, this.clear = function () { this.dataSystem.clear() }, this.where = function (e, t) { for (var s = new Array, o = JSON.parse(this.dataSystem.get(this.name)), n = 0; n < o.length; n++) { var i = o[n]; i[e] == t && (this.debug === !0 && (console.log(this.name + " -> search: Object matched - "), console.log(i)), s.push(i)) } return s.length < 1 && this.debug === !0 && console.log(this.name + " -> search: No objects, with the property of " + e + ", matched " + t), this.debug === !0 && (console.log(this.name + " -> search: Final result - "), console.log(s)), s } } 
-        return new dataGroup(
-            name+"-app-data",
-            { set: function (a, b) { return localStorage.setItem(a, b); }, get: function (a) { return localStorage.getItem(a); } }
-        );
+        function dataGroup(name) {
+            this.name = name;
+            this.dataSystem = { 
+                set: function (a, b) { 
+                    return localStorage.setItem(a, b); 
+                }, get: function (a) { 
+                    return localStorage.getItem(a); 
+                } 
+            };
+            if (this.name = name, null == this.dataSystem.get(name)) {
+                var setup = new Array;
+                this.dataSystem.set(name, JSON.stringify(setup))
+            }
+            this.debug = false;
+            this.add = function (e) {
+                var t = JSON.parse(this.dataSystem.get(this.name));
+                t.push(e), this.dataSystem.set(this.name, JSON.stringify(t)), this.debug === !0 && console.log(this.name + " -> add: Object successfully added!")
+            }, 
+            this.exists = function (e, t) {
+                var s = JSON.parse(this.dataSystem.get(this.name));
+                if (s.length > 0) {
+                    for (var o = 0; o < s.length; o++) {
+                        var n = s[o];
+                        if (n[e] == t) return this.debug === !0 && console.log(this.name + " -> exists: returned true"), !0
+                    }
+                    this.dataSystem.set(this.name, JSON.stringify(s))
+                } else this.debug === !0 && console.log(this.name + " -> exists: No objects are stored!")
+            }, 
+            this.edit = function (e, t, s, o) {
+                var n = JSON.parse(this.dataSystem.get(this.name));
+                if (n.length > 0) {
+                    for (var i = 0; i < n.length; i++) {
+                        var a = n[i];
+                        a[e] == t && (this.debug === !0 && (console.log(this.name + " -> edit: Object before - "), console.log(a)), a[s] = o, this.debug === !0 && (console.log(this.name + " -> edit: Object after - "), console.log(a)), n[i] = a, this.debug === !0 && console.log(this.name + " -> edit: Object saved!"))
+                    }
+                    this.dataSystem.set(this.name, JSON.stringify(n))
+                } else this.debug === !0 && console.log(this.name + " -> edit: No objects are stored!")
+            }, 
+            this.remove = function (e, t) {
+                var s = JSON.parse(this.dataSystem.get(this.name));
+                if (s.length > 0) {
+                    for (var o = 0; o < s.length; o++) {
+                        var n = s[o];
+                        n[e] == t && (this.debug === !0 && (console.log(this.name + " -> remove: Object matched for removal -"), console.log(n)), s.splice(o, 1), this.debug === !0 && console.log(this.name + " -> remove: Object deleted!"))
+                    }
+                    this.dataSystem.set(this.name, JSON.stringify(s))
+                } else this.debug === !0 && console.log(this.name + " -> remove: No objects are stored!")
+            }, 
+            this.get = function (e, t) {
+                for (var s = JSON.parse(this.dataSystem.get(this.name)), o = 0; o < s.length; o++) {
+                    var n = s[o];
+                    if (n[e] == t) return this.debug === !0 && (console.log(this.name + " -> get: Object found! "), console.log(n)), n
+                }
+                return this.debug === !0 && console.log(this.name + " -> get: Object not found!"), s.length < 1 && this.debug === !0 && console.log(this.name + " -> get: No objects, with the property of " + e + ", matched " + t), null
+            }, 
+            this.listAll = function () {
+                var e = JSON.parse(this.dataSystem.get(this.name));
+                return e.length < 1 && this.debug === !0 && console.log(this.name + " -> listAll: There are no stored objects to return!"), this.debug === !0 && (console.log(this.name + " -> listAll: Objects were found!"), console.log(e)), e
+            }, 
+            this.clear = function () {
+                this.dataSystem.clear()
+            }, 
+            this.where = function (e, t) {
+                for (var s = new Array, o = JSON.parse(this.dataSystem.get(this.name)), n = 0; n < o.length; n++) {
+                    var i = o[n];
+                    i[e] == t && (this.debug === !0 && (console.log(this.name + " -> search: Object matched - "), console.log(i)), s.push(i))
+                }
+                return s.length < 1 && this.debug === !0 && console.log(this.name + " -> search: No objects, with the property of " + e + ", matched " + t), this.debug === !0 && (console.log(this.name + " -> search: Final result - "), console.log(s)), s
+            }
+        }
+        app.extentions = new dataGroup(name+"-extensions");
+        return new dataGroup(name+"-app-data");
     })();
+    app.extentions.update = function (data) {
+        for (var k in data) {
+            app.extentions.edit("name", data.name, k, data[k]);
+        }
+    };
     app.signup = function (data, done, fail) {
         if (data[app.uid]) {
             if (data.password) {
                 if (!app.users.exists(app.uid, data[app.uid])) {
-                    data.password = hash(data.password)
+                    data.password = hash(data.password);
+                    data.joinedOn = new Date();
+                    data.lastUpdated = new Date();
+                    data.guid = btoa("" + Math.random() * 1000000000000);
                     app.users.add(data);
-                    sessionStorage.setItem(name + "-current-user", data[app.uid]);
+                    sessionStorage.setItem(name + "-current-user", data.guid);
                     react(done, data);
                 } else {
                     react(fail, data, "That "+app.uid+" is already in use!");
@@ -45,14 +122,15 @@ function SUM(name,uid,loggedIn,loggedOut) {
             throw new Error(name+" -> Register: "+app.uid+" must be defined.")
         }
     };
-    app.update = function (data, id, finished) {
+    app.update = function (data, guid, finished) {
         for (var k in data) {
             if (k == "password") {
-                app.users.edit(app.uid, id, k, hash(data[k]));
+                app.users.edit("guid", guid, k, hash(data[k]));
             } else {
-                app.users.edit(app.uid, id, k, data[k]);
+                app.users.edit("guid", guid, k, data[k]);
             }
         }
+        app.users.edit(app.uid, id, "lastUpdated", new Date());
         react(finished, data, "Successfully updated user!");
     };
     app.auth = function (data, done, fail) {
@@ -78,10 +156,11 @@ function SUM(name,uid,loggedIn,loggedOut) {
     };
     app.login = function (data, done, fail) {
         app.auth(data, function(data){
-            sessionStorage.setItem(name+"-current-user",data[app.uid]);
-            react(done, data, "Login successfull!");
+            var user = app.users.get(app.uid, data.data[app.uid]);
+            sessionStorage.setItem(name + "-current-user", user.guid);
+            react(done, data.data, "Login successfull!");
         }, function(data) {
-            react(fail, data, "Login failed!");
+            react(fail, data.data, "Login failed!");
         });
     };
     app.logout = function (done) {
@@ -95,15 +174,15 @@ function SUM(name,uid,loggedIn,loggedOut) {
         return sessionStorage.getItem(name + "-current-user") != null ? true : false;
     };
     app.currentUser = function () {
-        return app.users.get(app.uid,app.loggedInAs());
+        return app.users.get("guid",app.loggedInAs());
     };
     app.deleteUserAccount = function (data, done, fail) {
         app.auth(data, function (data) {
-            sessionStorage.setItem(name + "-current-user", data[app.uid]);
+            sessionStorage.setItem(name + "-current-user", data.data[app.uid]);
             app.users.remove(app.uid, data[app.uid]);
-            react(done, data, "User deleted!");
+            react(done, data.data, "User deleted!");
         }, function (data) {
-            react(fail, data, "User does not exist!");
+            react(fail, data.data, "User does not exist!");
         });
     };
     app.getProfilePictureData = function (uid) {
@@ -111,7 +190,26 @@ function SUM(name,uid,loggedIn,loggedOut) {
     };
     app.reset = function () {
         localStorage.clear();
+        sessionStorage.clear();
         window.location.href = window.location.href;
+    };
+    app.setSecurityQuestion = function (user, question, answer) {
+        user.SQ = question;
+        user.SQA = hash(answer);
+    };
+    app.forgotPassword = function (uid, securityQuestionAnswer, newPassword, done, fail) {
+        if (app.users.exists(app.uid, uid)) {
+            var user = app.users.get(app.uid, uid);
+            if (user.SQA === hash(securityQuestionAnswer)) {
+                app.users.update(app.uid, uid, "password", newPassword);
+                user = app.users.get(app.uid, uid);
+                react(done, user, "Successfully changed password!");
+            } else {
+                react(fail, {}, "Wrong answer.");
+            }
+        } else {
+            react(fail, {}, "That "+app.uid+" isn't used in this application.");
+        }
     };
     app.getForm = function (form) { //returns an object of form elements with names (or IDs) as property names and the values of the elements as the values of the properties.
         var response = {};
@@ -132,19 +230,72 @@ function SUM(name,uid,loggedIn,loggedOut) {
         }
         return response;
     };
-    app.parseURL = function() {
-        var url = window.location.href, data = {};
-        url = url.substring(url.indexOf("#")+1,url.length);
-        var kv = url.split("&");
-        kv.forEach(function(e){
-            data[e.split("=")[0]] = e.split("=")[1];
+    app.newComponent = function (name, selector, operation, description) {
+        var elements = document.querySelectorAll(selector);
+        elements.forEach(function(element) {
+            operation(element);
         });
-        return kv[0].split("=").length > 1 ? data : url;
-    }
+        var extension = {
+            name: name,
+            id: btoa(name + selector + Math.floor(Math.random()*1000)),
+            selector: selector,
+            operation: operation.toString(),
+            description: description || ""
+        };
+        if (!app.extentions.exists("name",name)) {
+            app.extentions.add(extension);
+        } else if (app.extentions.exists("name",name)) {
+            app.extentions.update(extension);
+        }
+    };
+    app.generateView = function(element, data, template) {
+        var template = !!template ? template : element.innerHTML || "";
+        element.innerHTML = "";
+        data = data || [];
+        data.forEach(function (u) {
+            var temp = template;
+            for (var k in u) {
+                temp = temp.split("$" + k).join(u[k]);
+            }
+            element.innerHTML += temp;
+        });
+    };
+    app.parseURL = function (char) {
+        var url = window.location.href, data = {};
+        char = !!char ? char === "?" || char === "#" ? char : "check" : "check";
+        if (char === "check") {
+            char = url.includes("?") ? "?" : url.includes("#") ? "#" : false;
+            if (char === false) { return false; }
+        }
+        url = url.substring(url.indexOf(char) + 1, url.length);
+        if (url.includes("=")) {
+            var kv = url.split("&");
+            kv.forEach(function (e) {
+                data[e.split("=")[0]] = e.split("=")[1];
+            });
+            return kv[0].split("=").length > 1 ? data : url;
+        }
+        return url;
+    };
     app.run = function () {
-        var forms = document.querySelectorAll("form");
-        forms.forEach(function (e) {
+        app.newComponent("from-url","[from-url]", function (e) {
+            var str = e.getAttribute("from-url");
+            var kv = str.split(" ").join("").split(",");
+            var urlData = app.parseURL();
+            kv.forEach(function(e2){
+                var t = e2.split(":");
+                if (t[0] == "text") {
+                    e.innerHTML = urlData[t[1]];
+                } else {
+                    e.setAttribute(t[0],urlData[t[1]]);
+                }
+            });
+        });
+        document.querySelectorAll("form").forEach(function (e) {
             var formType = e.getAttribute("type");
+            if (formType === "signup") {
+                localStorage.setItem(name+"-blueprint",JSON.stringify(app.getForm(e)));
+            }
             e.addEventListener("submit", function (e2) {
                 var formData = app.getForm(e);
                 var id = e.getAttribute("uid");
@@ -154,7 +305,6 @@ function SUM(name,uid,loggedIn,loggedOut) {
                 }
                 if (formType === "login" || formType === "signup") {
                     e2.preventDefault();
-                    console.log("Submitting form", formType, formData);
                     app[formType](
                         formData,
                         e.getAttribute("on-success") || window.location.href,
@@ -181,23 +331,33 @@ function SUM(name,uid,loggedIn,loggedOut) {
             }
         });
         // Logout elements
-        var logout = document.querySelectorAll("[logout]");
-        logout.forEach(function (e) {
+        app.newComponent("Logout", "[logout]", function (e) {
             e.addEventListener("click", function (e2) {
                 app.logout(e.getAttribute("logout") || window.location.href);
             });
-        });
+        }, "Logout the user when clicked.");
+        // 
+        app.newComponent("Delete User", "[delete-user-account]", function(e){
+            app.deleteUserAccount(
+                !!e.getAttribute("delete-user-account") ? e.getAttribute("delete-user-account") : app.loggedInAs(),
+                e.getAttribute("on-success") || window.location.href,
+                e.getAttribute("on-fail") || window.location.href
+            );
+        }, "Delete user account when clicked.");
         // Dynamic html tags
         var user = app.currentUser();
         for (var k in user) {
-            var elem = document.querySelectorAll(k);
-            console.log("element: ", elem);
-            elem.forEach(function (e) {
+            app.newComponent(k, k, function (e) {
                 e.innerHTML = user[k];
-            });
+            }, "Display "+k+" value of the user that is logged in.");
         }
+        app.newComponent("Display Users", "users", function(e){
+            app.generateView(e,app.users.listAll());
+        }, "For each user, display the innerHTML of the given element after replacing each $propertyName with its value.");
+        app.newComponent("App name", "app-name", function (e) {
+            e.innerHTML = app.name;
+        }, "Display app name.");
         // Upload Profile Picture
-        var uploaders = document.querySelectorAll("[upload='profile-pic']");
         //HTML: <input type="file" accept="image/*" onchange="uploadProfilePic('ImageTagId',event,"username","userAccountSystemName");">
         //This function uploads an image and saves it as the profile picture for the user that is logged in, and then it sets an image tag to the profile picture (in order to update the current profile picture)
         var uploadProfilePic = function (event) {
@@ -207,29 +367,33 @@ function SUM(name,uid,loggedIn,loggedOut) {
                 var dataURL = reader.result;
                 localStorage.setItem(app.name + "-profilepic-" + app.loggedInAs(), dataURL); // Save image in localStorage
                 //Update profile pics
-                var pics = document.querySelectorAll("[profile-pic]");
+                var pics = document.querySelectorAll("[profile-pic=''], [profile-pic='"+app.loggedInAs()+"']");
                 pics.forEach(function (e) {
                     e.setAttribute("src", dataURL);
                 });
             };
             reader.readAsDataURL(input.files[0]);
         };
-        uploaders.forEach(function (e) {
+        app.newComponent("Upload Profile Picture", "[upload='profile-pic']", function (e) {
             e.setAttribute("type", "file");
             e.setAttribute("accept", "image/*");
             e.addEventListener("change", function (event) {
                 uploadProfilePic(event);
             });
-        });
+        }, "Set up the given input element to upload the profile picture for the user that is logged in.");
         // Display Profile Picture
-        var pics = document.querySelectorAll("[profile-pic]");
-        pics.forEach(function (e) {
-            e.setAttribute("src",
-                app.getProfilePictureData(
-                    !!e.getAttribute("profile-pic") ? e.getAttribute("profile-pic") : app.loggedInAs()
-                )
-            );
-        });
+        app.newComponent("Display Profile Picture", "[profile-pic]", function (e) {
+            var src = e.getAttribute("profile-pic");
+            if (app.getProfilePictureData(
+                !!e.getAttribute("profile-pic") ? e.getAttribute("profile-pic") : app.loggedInAs()
+            )) {
+                e.setAttribute("src",
+                    app.getProfilePictureData(
+                        !!e.getAttribute("profile-pic") ? e.getAttribute("profile-pic") : app.loggedInAs()
+                    )
+                );
+            }
+        }, "Display profile picture for the user that is specified, or if set to nothing the user that is logged in.");
     }
     if (!!document.querySelectorAll("html")[0].getAttribute("require-login")) {
         if (!app.loggedIn()) {
@@ -240,7 +404,7 @@ function SUM(name,uid,loggedIn,loggedOut) {
         if (app.loggedIn()) {
             window.location.href = !!loggedIn ? loggedIn : document.querySelectorAll("html")[0].getAttribute("logged-in");
         }
-    }
+    };
 }
 
 // Automatic HTML implementation

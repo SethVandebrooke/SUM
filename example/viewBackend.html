@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+<style>
+    body {
+        width: 100%;
+    }
+    #table {
+        max-width: 100%;
+    }
+</style>
+</head>
+<body>
+<table id="table"></table>
+<script src="../SUM.js"></script>
+<script>
+    var app = window.app; // change window.app to your app variable
+    var users = app.users.listAll();
+    var columns = [];
+    var colHeaders = [];
+    for (var k in users[0]) {
+        columns.push({
+            data: k,
+            type: "text"
+        });
+        colHeaders.push(k);
+    }
+    var tableElement = document.querySelector('#table');
+    
+</script>
+</body>
+</html>
