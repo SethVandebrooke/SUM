@@ -11,7 +11,7 @@
       cursor: pointer;
     }
 
-    #myTable {
+    .tableView {
       width: 100%;
       overflow-x: scroll;
     }
@@ -51,7 +51,7 @@
               <a href="#" class="active nav-link" id="users" onclick="displayData('users')"><i class="fa fa-users"></i>&nbsp;Users</a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link" id="appDetails">App details</a>
+              <a href="#" class="nav-link" id="appDetails" onclick="viewAppDetails()">App details</a>
             </li>
           </ul>
         </div>
@@ -60,9 +60,29 @@
           <div class="display" id="appStuff">
             <div>
               <h1>Files connected to SUM</h1>
+              <div class="tableView">
+                <table class="table table-hover table-bordered table-sm">
+                  <thead>
+                    <tr>
+                      <th>File Name</th>
+                      <th>Folder</th>
+                      <th>Forms</th>
+                      <th>Fields</th>
+                    </tr>
+                  </thead>
+                  <tbody id="files">
+                    <tr>
+                      <td>$name</td>
+                      <td>$folder</td>
+                      <td>$forms</td>
+                      <td>$fields</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
-          <div class="display" id="myTable">
+          <div class="display tableView" id="myTable">
             <table class="table table-hover table-bordered table-sm">
               <thead id="fields">
                 <tr>
@@ -94,7 +114,7 @@
       var n = k.replace("-app-data", "");
       if (n!=k) {
         apps.push({name:n});
-      }
+      }5
     }
     function openApp(name) {
       var exists = apps.filter(function(e){return e.name==name;}).length > 0;
@@ -116,9 +136,34 @@
     }
 
     app.generateView(document.getElementById("apps"), apps);
-
+    var filesTemplate = document.getElementById("files").innerHTML;
     (function (app){
       if (app) {
+        window.viewAppDetails = function() {
+          $(".display").hide();
+          $("#appStuff").show();
+          var element = document.getElementById("files");
+          var files = app.files.listAll();
+          var output = [];
+          files.forEach(function(e) {
+            var formData = JSON.parse(e.forms);
+            var forms = [];
+            var fields = "";
+            formData.forEach(function(e2){
+              forms.push(e2.type);
+              fields += "<b>" + e2.type + "</b>" + ": " + e2["fields"].join(", ") + ". ";
+            });
+            output.push({
+              name: e.name,
+              forms: forms.join(", "),
+              fields: fields,
+              folder: e.folder
+            });
+          });
+          app.generateView(element,output,filesTemplate);
+          $(".active").removeClass("active");
+          $("#appDetails").addClass("active");
+        }
         window.displayData = function (name) {
           $(".display").hide();
           $("#myTable").show();
