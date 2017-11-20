@@ -20,6 +20,7 @@ function SUM(name,uid,loggedIn,loggedOut) {
         }
     }
     app.extentions = null;
+    app.files = null;
     app.users = (function(){
         function dataGroup(name) {
             this.name = name;
@@ -58,7 +59,7 @@ function SUM(name,uid,loggedIn,loggedOut) {
                     }
                     this.dataSystem.set(this.name, JSON.stringify(n))
                 } else this.debug === !0 && console.log(this.name + " -> edit: No objects are stored!")
-            }, 
+            },
             this.remove = function (e, t) {
                 var s = JSON.parse(this.dataSystem.get(this.name));
                 if (s.length > 0) {
@@ -91,6 +92,7 @@ function SUM(name,uid,loggedIn,loggedOut) {
                 return s.length < 1 && this.debug === !0 && console.log(this.name + " -> search: No objects, with the property of " + e + ", matched " + t), this.debug === !0 && (console.log(this.name + " -> search: Final result - "), console.log(s)), s
             }
         }
+        app.files = new dataGroup(name + "-files");
         app.extentions = new dataGroup(name+"-extensions");
         return new dataGroup(name+"-app-data");
     })();
@@ -278,9 +280,28 @@ function SUM(name,uid,loggedIn,loggedOut) {
         return url;
     };
     app.run = function () {
+        function fileInfo () {
+            var url = window.location.href;
+            url = url.split("/");
+            var folder = url[url.length - 2];
+            url = url[url.length - 1];
+            url = url.split("#")[0];
+            var name = url.split("?")[0];
+            return {name: name, folder: folder, forms: ""};
+        }
+        var currentFile = fileInfo();
+        function updateFileInfo(key,value) {
+            if (!app.files.exists("name", currentFile.name)) {
+                app.files.add(currentFile);
+            } else {
+                app.files.edit("name", currentFile.name, key, value);
+            }
+        }
+        updateFileInfo("folder",currentFile.folder);
+        var forms = [];
         app.newComponent("from-url","[from-url]", function (e) {
             var str = e.getAttribute("from-url");
-            var kv = str.split(" ").join("").split(",");
+            var kv = str.split(/\s/).join("").split(",");
             var urlData = app.parseURL();
             kv.forEach(function(e2){
                 var t = e2.split(":");
@@ -290,7 +311,7 @@ function SUM(name,uid,loggedIn,loggedOut) {
                     e.setAttribute(t[0],urlData[t[1]]);
                 }
             });
-        });
+        }, "Set attributes to values defined in the URL. Syntax: \"attribute: value, attribute: value\".");
         document.querySelectorAll("form").forEach(function (e) {
             var formType = e.getAttribute("type");
             if (formType === "signup") {
@@ -329,7 +350,12 @@ function SUM(name,uid,loggedIn,loggedOut) {
                     });
                 }
             }
+            var fields = [];
+            var f = app.getForm(e);
+            for (var k in f) { fields.push(k); }
+            forms.push({type: formType, fields: fields});
         });
+        updateFileInfo("forms", JSON.stringify(forms));
         // Logout elements
         app.newComponent("Logout", "[logout]", function (e) {
             e.addEventListener("click", function (e2) {

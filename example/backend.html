@@ -5,16 +5,19 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
-  <link rel="stylesheet" href="https://pingendo.com/assets/bootstrap/bootstrap-4.0.0-beta.1.css" type="text/css"> </head>
+  <link rel="stylesheet" href="https://pingendo.com/assets/bootstrap/bootstrap-4.0.0-beta.1.css" type="text/css">
   <style>
     a {
       cursor: pointer;
     }
+
     #myTable {
       width: 100%;
       overflow-x: scroll;
     }
   </style>
+</head>
+
 <body>
   <div class="py-5 text-center">
     <div class="container">
@@ -25,7 +28,20 @@
       </div>
     </div>
   </div>
-  <div class="py-5">
+  <div class="py-4">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+          <ul class="nav nav-tabs" id="apps">
+            <li class="nav-item">
+              <a href="#" class="active nav-link">$name</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="p-0">
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-2" style="transition: all 0.25s;">
@@ -35,32 +51,34 @@
               <a href="#" class="active nav-link" id="users" onclick="displayData('users')"><i class="fa fa-users"></i>&nbsp;Users</a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link" id="logs">Logs</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Debug</a>
+              <a href="#" class="nav-link" id="appDetails">App details</a>
             </li>
           </ul>
         </div>
         <div class="col-md-10" style="transition: all 0.25s;">
           <p class="lead text-center">Data view </p>
-          <div id="myTable">
-          <table class="table table-hover table-bordered table-sm" >
-            <thead id="fields">
-              <tr>
-                <th>#</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-              </tr>
-            </thead>
-            <tbody id="mainView">
-              <tr>
-                <td>1</td>
-                <td>Mark</td>
-                <td>Otto</td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="display" id="appStuff">
+            <div>
+              <h1>Files connected to SUM</h1>
+            </div>
+          </div>
+          <div class="display" id="myTable">
+            <table class="table table-hover table-bordered table-sm">
+              <thead id="fields">
+                <tr>
+                  <th>#</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                </tr>
+              </thead>
+              <tbody id="mainView">
+                <tr>
+                  <td>1</td>
+                  <td>Mark</td>
+                  <td>Otto</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -71,9 +89,39 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
   <script src="../SUM.js"></script>
   <script>
+    var apps = [], app = false;
+    for (var k in localStorage) {
+      var n = k.replace("-app-data", "");
+      if (n!=k) {
+        apps.push({name:n});
+      }
+    }
+    function openApp(name) {
+      var exists = apps.filter(function(e){return e.name==name;}).length > 0;
+      if (exists) {
+        app = new SUM(name);
+        return true;
+      } else {
+        return false;
+      }
+    }
+    if (!openApp("defaultApp")) {
+      if(!openApp(apps[0].name)) {
+        console.error("SUM can't find any active SUM applications! Try opening your application up in the browser");
+      } else {
+        console.info("Loaded app: "+apps[0].name);
+      }
+    } else {
+      console.info("Loaded default app");
+    }
+
+    app.generateView(document.getElementById("apps"), apps);
+
     (function (app){
       if (app) {
         window.displayData = function (name) {
+          $(".display").hide();
+          $("#myTable").show();
           var data = app[name].listAll();
           var temp = data[data.length-1];
           var fields = [];
