@@ -1,7 +1,8 @@
-function SUM(name,uid,loggedIn,loggedOut) {
+function SUM(config,run) {
     var app = this;
-    app.name = name;
-    app.uid = uid || "username";
+    config = config || {};
+    app.name = config.name || "defaultApp";
+    app.uid = config.uid || "username";
     if (localStorage.getItem("uid") != null) {
         app.uid = localStorage.getItem("uid");
     }
@@ -19,6 +20,9 @@ function SUM(name,uid,loggedIn,loggedOut) {
             }
         }
     }
+    app.Q = function (s) {
+        return document.querySelectorAll(s);
+    };
     app.extentions = null;
     app.files = null;
     app.users = (function(){
@@ -48,7 +52,7 @@ function SUM(name,uid,loggedIn,loggedOut) {
                         if (n[e] == t) return this.debug === !0 && console.log(this.name + " -> exists: returned true"), !0
                     }
                     this.dataSystem.set(this.name, JSON.stringify(s))
-                } else this.debug === !0 && console.log(this.name + " -> exists: No objects are stored!")
+                } else this.debug === !0 && console.log(this.name + " -> exists: No objects are stored!");
             }, 
             this.edit = function (e, t, s, o) {
                 var n = JSON.parse(this.dataSystem.get(this.name));
@@ -80,27 +84,78 @@ function SUM(name,uid,loggedIn,loggedOut) {
             this.listAll = function () {
                 var e = JSON.parse(this.dataSystem.get(this.name));
                 return e.length < 1 && this.debug === !0 && console.log(this.name + " -> listAll: There are no stored objects to return!"), this.debug === !0 && (console.log(this.name + " -> listAll: Objects were found!"), console.log(e)), e
-            }, 
+            },
             this.clear = function () {
                 this.dataSystem.clear()
-            }, 
+            },
+            this.update = function (ky,v,data) {
+                for (var k in data) {
+                    this.edit(ky, v, k, data[k]);
+                }
+            },
             this.where = function (e, t) {
                 for (var s = new Array, o = JSON.parse(this.dataSystem.get(this.name)), n = 0; n < o.length; n++) {
                     var i = o[n];
                     i[e] == t && (this.debug === !0 && (console.log(this.name + " -> search: Object matched - "), console.log(i)), s.push(i))
                 }
                 return s.length < 1 && this.debug === !0 && console.log(this.name + " -> search: No objects, with the property of " + e + ", matched " + t), this.debug === !0 && (console.log(this.name + " -> search: Final result - "), console.log(s)), s
-            }
+            },
+            this.filter = function (filter) {
+                return this.listAll().filter(filter);
+            };
         }
-        app.files = new dataGroup(name + "-files");
-        app.extentions = new dataGroup(name+"-extensions");
-        return new dataGroup(name+"-app-data");
+        app.files = new dataGroup(app.name + "-files");
+        app.extentions = new dataGroup(app.name + "-extensions");
+        return new dataGroup(app.name + "-app-data");
     })();
-    app.extentions.update = function (data) {
-        for (var k in data) {
-            app.extentions.edit("name", data.name, k, data[k]);
-        }
-    };
+    app.extentions.Update = function(data) {
+        app.extentions.update("name",data.name,data);
+    }
+    app.event = (function eventSystem(){
+        var events = {};
+        var event = function (...nameSpaces) {
+            var single = nameSpaces.length === 1;
+            var eventName = ([...nameSpaces]).join("/");
+            if(!events.hasOwnProperty(eventName)){
+                events[eventName]=[];
+            }
+            return {
+                listen: function(reaction){
+                    events[eventName].push(reaction);
+                    return reaction;
+                },
+                broadcast: function(...data){
+                    for (var k in events) {
+                        if (single) {
+                            if (k === eventName || k.match(eventName+"/") !== null) {
+                                events[k].forEach(function(event){
+                                    event(...data);
+                                });
+                            }
+                        } else {
+                            if (k.match(eventName) !== null) {
+                                events[k].forEach(function(event){
+                                    event(...data);
+                                });
+                            }
+                        }
+                    }
+                },
+                stopListening: function(reaction){
+                    for (var k in events) {
+                        if (k.match(eventName) !== null) {
+                            for(var i in events[eventName]){
+                                if(reaction.toString()==events[eventName][i].toString()){
+                                    events[eventName].splice(i,1);
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+        };
+        return event;
+    })();
     app.signup = function (data, done, fail) {
         if (data[app.uid]) {
             if (data.password) {
@@ -195,9 +250,13 @@ function SUM(name,uid,loggedIn,loggedOut) {
         sessionStorage.clear();
         window.location.href = window.location.href;
     };
-    app.setSecurityQuestion = function (user, question, answer) {
-        user.SQ = question;
-        user.SQA = hash(answer);
+    app.setSecurityQuestion = function (question, answer) {
+        var guid = app.loggedInAs();
+        if (guid) {
+            app.users.update("guid", guid, "SQ", question);
+            app.users.update("guid", guid, "SQA", hash(answer));
+            return true;
+        } else return false;
     };
     app.forgotPassword = function (uid, securityQuestionAnswer, newPassword, done, fail) {
         if (app.users.exists(app.uid, uid)) {
@@ -214,26 +273,21 @@ function SUM(name,uid,loggedIn,loggedOut) {
         }
     };
     app.getForm = function (form) { //returns an object of form elements with names (or IDs) as property names and the values of the elements as the values of the properties.
-        var response = {};
-        var elements = form.elements;
-        for (var i = 0; i < elements.length; i++) {
-            if (elements[i].tagName == "INPUT" || elements[i].tagName == "SELECT" || elements[i].tagName == "TEXTAREA") {
-                var backup = elements[i].tagName + Math.floor(Math.random() * 500);
-                var title = elements[i].name != "" ? elements[i].name : (elements[i].id != "" ? elements[i].id : backup);
-                var val = elements[i].value;
-                if (!elements[i].tagName == "INPUT" && !elements[i].type == "submit") {
-                    elements[i].value = "";
-                }
-                if (title.toLowerCase().replace("submit","")===title.toLowerCase() &&
-                    title.toLowerCase().replace("confirm","")===title.toLowerCase()) {
-                    response[title] = val;
+        var response = {}, elements = form.elements;
+        for (var i in elements) {
+            var element = elements[i], tagName = elements[i].tagName, name = elements[i].name;
+            if (tagName == "INPUT" || tagName == "SELECT" || tagName == "TEXTAREA") {
+                var backup = tagName + i;
+                var title = !!name ? name : (element.id || backup);
+                if (!title.toLowerCase().match("submit") && !title.toLowerCase().match("confirm")) {
+                    response[title] = element.value;
                 }
             }
         }
         return response;
     };
     app.newComponent = function (name, selector, operation, description) {
-        var elements = document.querySelectorAll(selector);
+        var elements = app.Q(selector);
         elements.forEach(function(element) {
             operation(element);
         });
@@ -247,7 +301,7 @@ function SUM(name,uid,loggedIn,loggedOut) {
         if (!app.extentions.exists("name",name)) {
             app.extentions.add(extension);
         } else if (app.extentions.exists("name",name)) {
-            app.extentions.update(extension);
+            app.extentions.Update(extension);
         }
     };
     app.generateView = function(element, data, template) {
@@ -278,6 +332,16 @@ function SUM(name,uid,loggedIn,loggedOut) {
             return kv[0].split("=").length > 1 ? data : url;
         }
         return url;
+    };
+    app.searchContext = function(name,element) {
+        var html = element || document.body.innerHTML;
+        var url = window.location.href;
+        var title = document.querySelector("title").innerHTML||"";
+        function includes(str, str2) {
+            str = str.toLowerCase();
+            return str.replace(str2.toLowerCase(),"") != str;
+        }
+        return includes(url,name) || includes(html,name) || includes(title,name);
     };
     app.run = function () {
         function fileInfo () {
@@ -312,8 +376,16 @@ function SUM(name,uid,loggedIn,loggedOut) {
                 }
             });
         }, "Set attributes to values defined in the URL. Syntax: \"attribute: value, attribute: value\".");
-        document.querySelectorAll("form").forEach(function (e) {
+        var FORMS = document.querySelectorAll("form");
+        FORMS.forEach(function (e) {
             var formType = e.getAttribute("type");
+            if (formType == null && FORMS.length === 1) {
+                if (app.searchContext("login") || app.searchContext("signin")) {
+                    formType = "login"; console.log("Deduced: ",formType);
+                } else if (app.searchContext("singup") || app.searchContext("register")) {
+                    formType = "signup"; console.log("Deduced: ",formType);
+                } else return; //If SUM has no idea what the form is supposed to do then forget it
+            }
             if (formType === "signup") {
                 localStorage.setItem(name+"-blueprint",JSON.stringify(app.getForm(e)));
             }
@@ -421,25 +493,19 @@ function SUM(name,uid,loggedIn,loggedOut) {
             }
         }, "Display profile picture for the user that is specified, or if set to nothing the user that is logged in.");
     }
-    if (!!document.querySelectorAll("html")[0].getAttribute("require-login")) {
+    if (!!app.Q("html")[0].getAttribute("require-login")) {
         if (!app.loggedIn()) {
-            window.location.href = !!loggedOut ? loggedOut : document.querySelectorAll("html")[0].getAttribute("require-login");
+            window.location.href = !!config.loggedOut ? config.loggedOut : app.Q("html")[0].getAttribute("require-login");
         }
     }
-    if (!!document.querySelectorAll("html")[0].getAttribute("logged-in")) {
+    if (!!app.Q("html")[0].getAttribute("logged-in")) {
         if (app.loggedIn()) {
-            window.location.href = !!loggedIn ? loggedIn : document.querySelectorAll("html")[0].getAttribute("logged-in");
+            window.location.href = !!config.loggedIn ? config.loggedIn : app.Q("html")[0].getAttribute("logged-in");
         }
     };
+    if (run === undefined) {
+        this.run();
+    }
 }
 
-// Automatic HTML implementation
-var auto = true;
-(function(w){
-    if (auto) {
-        var app = new SUM("defaultApp"); // Init app
-        app.run(); // Run SUM
-        // Uncomment the line of code below to make 'app' a global variable (For Debugging)
-        w.app = app;
-    }
-})(window);
+window.app = new SUM(); // Init default app

@@ -9,15 +9,20 @@ Serverless, Painless, Seamless
   - [Displaying User Information](#display-user-information)
   - [Requiring Login](#require-login)
   - [Profile Pictures](#profile-pictures)
+- [Helper Pages](helper-pages)
 - [SUM API](#sum-api)
+  - [The SUM constructor](#using-the-constructor)
   - [Basic Functions](#basic-functions)
   - [Example Code](#example-code)
 - [Advance Functions](#advance-functions)
   - [Advance Functions In Use](#advance-functions-in-use)
+- [SUM Event Handler](#sum-event-handler)
+- [Writing Extensions](#writing-extensions)
+
 
 ### What is it? ...and what does it do?
 
- - SUM makes prototyping web/hybrid applications of any kind quick and painless without taking up hardly any space (it's only 9 Kb minified).
+ - SUM makes prototyping web/hybrid applications of any kind quick and painless without taking up hardly any space (it's only 15 Kb minified).
  - SUM works anywhere and everywhere: electron (windows, mac, linux), cordova (android, ios, etc...), and browsers alike.
  - SUM focuses on making signing in, logging in, logging out, viewing and updating user data easier than making the UI itself.
  - SUM requires no configuration. Just plug and play right out of the box! You don't even have to touch the JavaScript if you don't want to!
@@ -105,10 +110,10 @@ The following form is completely functional because of the form attributes: type
 Granted, the form would technically even work without the on-success attribute... but you wouldn't know if it's working when you submit the form. 
 (Remember: password is a required field)
 ```html
-<form type="signup" uid="username" on-success="profile.html">
-  <input type="text" name="username" id="username" placeholder="Username" value="">
-  <input type="email" name="email" id="email" placeholder="Email Address" value="">
-  <input type="password" name="password" id="password" placeholder="Password">
+<form type="signup" uid="username" on-success="profile.html" on-fail="javascript:alert('Username already exists')">
+  <input type="text" name="username" id="username">
+  <input type="email" name="email" id="email">
+  <input type="password" name="password" id="password">
   <input type="submit" name="register-submit" id="register-submit" value="Register Now">
 </form>
 ```
@@ -120,7 +125,7 @@ For example, if you want to display any user data you will need to use exactly t
 ```
 And in order for the user to log in, you must use the uid specified in the signup form and password:
 ```html
-<form type="login" on-success="profile.html">
+<form type="login" on-success="profile.html" on-fail="">
   <input type="text" name="username" id="username" placeholder="Username" value="">
   <input type="password" name="password" id="password" placeholder="Password">
   <input type="submit" name="register-submit" id="register-submit" value="Register Now">
@@ -141,6 +146,21 @@ Logging out is stupid easy... just add "logout" as an attribute to any element a
 
 # SUM API
 
+## Using the Constructor
+
+Syntax: `SUM(CONFIG: object, RUN: boolean)`
+
+The SUM constructor allows you to define the name of your app (used for displaying the name and for storing data under the given name), the uid name (So that you don't have to define the uid in your html), the login page (what page to go to when a user visits a protected page without being logged in), and the logged in page (what page to go to if SUM remembers the user from the last time they logged in).
+
+```js
+var myApp = new SUM({ // All config settings are optional
+  name: "myCoolApp",
+  uid: "email",
+  loggedOut: "login.html",
+  loggedIn: "home.html"
+});
+```
+
 ## Basic functions
 
 SUM's basic functions are fairly simple.
@@ -156,10 +176,13 @@ Function                                    | Returns           | Description
 app.register(userData, done, fail)          | undefined         | Registers a user. 
 app.update(userData, done, fail)            | undefined         | Updates user properties
 app.login(userData, done, fail)             | undefined         | Logs user in.
+app.deleteUserAccount(userData, done, fail)                           | undefined            | Completely deletes user account
 app.logout(done)                            | object            | Logs user out.
 app.loggedIn()                              | boolean           | Returns true or false whether a user is logged in.
 app.loggedInAs()                            | string            | Returns username of the user that is logged in.
 app.currentUser()                           | object            | Returns the user object of the user that is logged in.
+app.setSecurityQuestion(question, answer)                           | boolean            | Sets security question and answer for the logged in user and returns true if successfull.
+app.forgotPassword(uid, securityAnswer, newPassword, done, fail)  | undefined             | Changes the password for the user with the given uid if the answer matches the user's security question
 
 ### Example code
 
@@ -199,11 +222,12 @@ Function                                    | Returns           | Description
 ------------------------------------------- | ----------------- | ---------------------------------------------
 app.users.add(OBJECT)                                 | undefined         | Stores an object in the datasection
 app.users.edit(whereThis,equalsThis,setThis,toThis)   | undefined         | Changes a property's value of any object who's given 
-app.users.property equals the given value.
+property equals the given value.
 app.users.remove(whereThis,equalsThis)                | undefined         | Removes any object who's given property equals the given value.
 app.users.get(whereThis,equalsThis)                   | object            | Returns the object who's given property equals the given value.
 app.users.listAll()                                   | array of objects  | Returns all stored objects in the dataSection
-app.users.search(whereThis,equalsThis)                | array of objects  | Returns all objects who's given property equals the given value.
+app.users.filter(function)                | array of objects  | Takes a function and runs it against each user. If the function returns true than it adds the user to the results.
+app.reset()                                     | undefined | Clears all app data.
 app.getForm(form)                                     | object | Takes a DOM form element and returns an object where the input element ID\Names are the keys and their values are the values
 app.getProfilePictureData                             | image data URL | Fetches the image data URL for the given user
 
@@ -249,8 +273,8 @@ app.users.get("username","JohnDoe");
 app.users.listAll();
 // Returns [{ username: "JohnDoe", password: "783jojo", email: "john@doe.com" }];
 
-// Get all users where username="JohnDoe"
-app.search("username","JohnDoe");
+// Get all users where username=="JohnDoe"
+app.filter(user => user.username == "JohnDoe");
 // Returns [{ username: "JohnDoe", password: "783jojo", email: "john@doe.com" }];
 
 // Assuming imageElement is a DOM element for an image. . .
@@ -261,3 +285,69 @@ imageElement.setAttribute("src",app.getProfilePictureData("JohnDoe"));
 app.users.remove("username","JohnDoe")
 
 ```
+
+## SUM Event Handler
+The SUM Event Handler is a namespace based pubsub that works like so:
+```js
+app.event(...NAMESPACES, EVENT).ACTION(PARAMETERS);
+```
+Quick Example:
+```js
+var myevent  = app.event("myevent");
+var myListener = myevent.listen(function(name,isBirthday){
+  console.log("Hey "+name+(isBirthday?", Happy Birthday!":"!"));
+});
+myevent.broadcast("Josh",true); //logs: Hey Josh, Happy Birthday!
+//Note: you can simply call your listener specifically if wanted:
+myListener("Josh",false); //logs: Hey Josh!
+myevent.stopListening(myListener);
+```
+
+Functions and Syntax:
+```js
+broadcast(any, any, any...);
+listen(function);
+stopListening(listener);
+```
+
+### Namespaces
+The Event Handler accepts any number of namespaces (given as seperate parameters).
+For Example:
+```js
+app.event("root","users","staff","admin")
+```
+Notice that the namespace names naturally get more specific as they move to the right. This is because namespaces are nested, meaning that every given namespace is a child of the one to the left. Broadcasting to a namespace will broadcast to all of its children as well.
+```js
+event("all","test").listen(d => console.log(d) );
+event("all","test2").listen(d => console.warn(d) );
+event("all","test").broadcast("testing 1, 2, 3"); // Triggers test
+event("all","test2").broadcast("testing 1, 2, 3"); // Triggers test2
+event("all").broadcast("testing 1, 2, 3"); // Triggers test and test2
+```
+
+## Writing Extensions
+
+Extending SUM is as easy as writing and using a function. You can extend your application's functionality by adding a function to the object and extend SUM's functionality by using the newComponent function:
+```js
+app.getFirstName = function() {
+  return app.currentUser().firstName;
+};
+app.newComponent(
+    "Hello User", //Name
+    "hello-user", //CSS Selector
+    function(element){ // How you want to process each element
+        element.innerHTML = "Hello "+app.currentUser().username;
+    },
+    "Display a greeting to the user" // Description
+);
+```
+Syntax: ```newComponent(name: string,selector: string,operation: function,description: string)```
+
+## Helper Pages
+SUM helper pages are single html files that show helpful information about your application you're building with SUM.
+
+### Backend Helper Page
+The Backend helper page provides a view of the user database. It also displays a list of the html files in your application that use SUM, their location, what kind of forms they use, and what relevant fields from those forms are being used when submitted.
+
+### Madoc Helper Page
+The Madoc helper page generates documentation for you about what kind of components SUM has generated for use, based off of the pages that SUM detects you using (when you open a page in the browser).

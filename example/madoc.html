@@ -25,10 +25,10 @@
             <a class="nav-link" href="index.html">Run <app-name>Run MyApp</app-name></a>
           </li>
         </ul>
-        <div class="form-inline m-0">
+        <!--<div class="form-inline m-0">
           <input class="form-control mr-2" type="text" placeholder="Search">
           <button class="btn btn-primary" type="submit">Search</button>
-        </div>
+        </div>-->
       </div>
     </div>
   </nav>
@@ -61,7 +61,7 @@
           <p class="text-uppercase">Just use your application to sign up a single user and sum will learn everything it needs to know to write up your documentation here on this page. (just make sure your app and this page are in the same directory)</p>
           <ul class="nav nav-pills flex-column">
             <li class="nav-item">
-              <a class="nav-link active" onclick="displayUserTags()" id="cut">Custom User Tags</a>
+              <a class="nav-link active" onclick="displayUserTags()" id="cut">User Data Tags</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" onclick="displayComponents()" id="cc">Custom Components</a>
@@ -95,7 +95,7 @@
       if (typeof app != undefined) {
         window.template = document.getElementById("output").innerHTML;
         window.displayUserTags = function () {
-          document.getElementById("title").innerHTML = "Custom User Tags";
+          document.getElementById("title").innerHTML = "User Data Tags";
           var custags = JSON.parse(localStorage.getItem((app.name || "defaultApp") + "-blueprint")) || {};
           var tagsList = [];
           for (var k in custags) {
