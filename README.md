@@ -9,7 +9,7 @@ Serverless, Painless, Seamless
   - [Displaying User Information](#display-user-information)
   - [Requiring Login](#require-login)
   - [Profile Pictures](#profile-pictures)
-- [Helper Pages](helper-pages)
+- [Helper Pages](#helper-pages)
 - [SUM API](#sum-api)
   - [The SUM constructor](#using-the-constructor)
   - [Basic Functions](#basic-functions)
