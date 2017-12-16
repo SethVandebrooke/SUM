@@ -22,7 +22,7 @@ Serverless, Painless, Seamless
 
 ### What is it? ...and what does it do?
 
- - SUM makes prototyping web/hybrid applications of any kind quick and painless without taking up hardly any space (it's only 15 Kb minified).
+ - SUM makes prototyping web/hybrid applications of any kind quick and painless without taking up hardly any space (it's a single file).
  - SUM works anywhere and everywhere: electron (windows, mac, linux), cordova (android, ios, etc...), and browsers alike.
  - SUM focuses on making signing in, logging in, logging out, viewing and updating user data easier than making the UI itself.
  - SUM requires no configuration. Just plug and play right out of the box! You don't even have to touch the JavaScript if you don't want to!
