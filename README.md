@@ -1,7 +1,5 @@
-# SUM - Serverless User Management
+# SUM - Serverless User Management - Version: 1.6.5
 Serverless, Painless, Seamless
-
-## Version: 1.6.5
 
 SUM makes user data management a seamless/painless process without requiring a server of any kind. It analyzes your html pages (as they load) in order to simulate/generate the needed database, backend, and frontend functionality.
 SUM then provides application specific html tags and attributes that make adding full functionality as easy HTML itself.
