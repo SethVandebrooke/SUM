@@ -328,6 +328,7 @@ event("all","test2").broadcast("testing 1, 2, 3"); // Triggers test2
 event("all").broadcast("testing 1, 2, 3"); // Triggers test1 and test2
 //The following will also work (because "test" is inside both event names):
 event("all","test").broadcast("testing 1, 2, 3"); // Triggers test1 and test2
+
 ```
 
 ## Writing Extensions

@@ -116,7 +116,7 @@ function SUM(config,run) {
         var event = function () {
             var nameSpaces = Array.from(arguments);
             var single = nameSpaces.length === 1;
-            var eventName = ([...nameSpaces]).join("/");
+            var eventName = nameSpaces.join("/");
             if(!events.hasOwnProperty(eventName)){
                 events[eventName]=[];
             }
@@ -131,13 +131,13 @@ function SUM(config,run) {
                         if (single) {
                             if (k === eventName || k.match(eventName+"/") !== null) {
                                 events[k].forEach(function(event){
-                                    event(...data);
+                                    event.apply(null,data);
                                 });
                             }
                         } else {
                             if (k.match(eventName) !== null) {
                                 events[k].forEach(function(event){
-                                    event(...data);
+                                    event.apply(null,data);
                                 });
                             }
                         }
