@@ -321,11 +321,13 @@ app.event("root","users","staff","admin")
 ```
 Notice that the namespace names naturally get more specific as they move to the right. This is because namespaces are nested, meaning that every given namespace is a child of the one to the left. Broadcasting to a namespace will broadcast to all of its children as well.
 ```js
-event("all","test").listen(d => console.log(d) );
+event("all","test1").listen(d => console.log(d) );
 event("all","test2").listen(d => console.warn(d) );
-event("all","test").broadcast("testing 1, 2, 3"); // Triggers test
+event("all","test1").broadcast("testing 1, 2, 3"); // Triggers test1
 event("all","test2").broadcast("testing 1, 2, 3"); // Triggers test2
-event("all").broadcast("testing 1, 2, 3"); // Triggers test and test2
+event("all").broadcast("testing 1, 2, 3"); // Triggers test1 and test2
+//The following will also work (because "test" is inside both event names):
+event("all","test").broadcast("testing 1, 2, 3"); // Triggers test1 and test2
 ```
 
 ## Writing Extensions

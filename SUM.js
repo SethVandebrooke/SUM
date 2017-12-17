@@ -113,7 +113,8 @@ function SUM(config,run) {
     }
     app.event = (function eventSystem(){
         var events = {};
-        var event = function (...nameSpaces) {
+        var event = function () {
+            var nameSpaces = Array.from(arguments);
             var single = nameSpaces.length === 1;
             var eventName = ([...nameSpaces]).join("/");
             if(!events.hasOwnProperty(eventName)){
@@ -124,7 +125,8 @@ function SUM(config,run) {
                     events[eventName].push(reaction);
                     return reaction;
                 },
-                broadcast: function(...data){
+                broadcast: function(){
+                    var data = Array.from(arguments);
                     for (var k in events) {
                         if (single) {
                             if (k === eventName || k.match(eventName+"/") !== null) {
