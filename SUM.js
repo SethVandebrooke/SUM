@@ -470,7 +470,7 @@ function SUM(config,run) {
                 var dataURL = reader.result;
                 localStorage.setItem(app.name + "-profilepic-" + app.loggedInAs(), dataURL); // Save image in localStorage
                 //Update profile pics
-                var pics = document.querySelectorAll("[profile-pic=''], [profile-pic='"+app.loggedInAs()+"']");
+                var pics = app.Q("[profile-pic=''], [profile-pic='"+app.loggedInAs()+"']");
                 pics.forEach(function (e) {
                     e.setAttribute("src", dataURL);
                 });

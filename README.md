@@ -36,7 +36,7 @@ SUM then provides application specific html tags and attributes that make adding
 Why should I use it?
  1. Because it SUMs up user management for your prototypes, so that it is ACTUALLY worth it to add behavior to a prototype you're probably going to through away.
  2. OR maybe you're making an offline application that just needs to handle user prefereces. Better yet, you already made your offline application and you simply want multi user functionality without making entire backend!
- 3. It integrates with whatever MVC or MVVM library you use!
+ 3. It works along with whatever MVC or MVVM library you use!
 
 # Getting Started
 
