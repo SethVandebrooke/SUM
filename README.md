@@ -88,7 +88,7 @@ To display user information simply use the id or name that you used in the form 
  ```html
 <html require-login="login.html">
  ```
- Simply use 'force-login' to specify where to go to login and if the viewer isn't logged in then it will automatically redirect to that page.
+ Simply use 'require-login' to specify where to go to login and if the viewer isn't logged in then it will automatically redirect to that page.
  
  You can also upload and display profile pictures:
  
