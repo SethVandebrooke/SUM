@@ -189,7 +189,7 @@ function SUM(config,run) {
                 app.users.edit("guid", guid, k, data[k]);
             }
         }
-        app.users.edit(app.uid, id, "lastUpdated", new Date());
+        app.users.edit("guid", guid, "lastUpdated", new Date());
         react(finished, data, "Successfully updated user!");
     };
     app.auth = function (data, done, fail) {
