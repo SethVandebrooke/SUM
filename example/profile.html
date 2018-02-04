@@ -1,3 +1,4 @@
+<!DOCTYPE>
 <html require-login="index.html">
 
 <head>
@@ -145,6 +146,26 @@
                     <button type="button" class="btn btn-danger" logout>Logout</button>
                     <br>
                 </div>
+                <br><br>
+                <form id="update-form" role="form" type="update" on-success="profile.html">
+                    <p>Update user info: </p>
+                    <div class="form-group">
+                        <input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="">
+                    </div>
+                    <div class="form-group">
+                        <input type="email" name="email" id="email" tabindex="1" class="form-control" placeholder="Email Address" value="">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="Password">
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-6 col-sm-offset-3">
+                                <input type="submit" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-register" value="Update Now">
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
             <div class="col-xs-0 col-sm-0 col-md-6">
                 <h2>Users:</h2>
@@ -152,7 +173,7 @@
                     <users>
                         <div class="row">
                         <div class="col-md-4">
-                            <img src="./images/placeholder.jpg" profile-pic="$guid" class="img-responsive">
+                            <img src="./images/placeholder.jpg" profile-pic="$username" class="img-responsive">
                         </div>
                         <div class="col-md-8">
                         <h1>$username
@@ -166,25 +187,34 @@
         </div>
         <br><br>
         <div class="row">
-            <p>Update user info: </p>
-            <form id="update-form" role="form" type="update" on-success="profile.html">
-                <div class="form-group">
-                    <input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="">
-                </div>
-                <div class="form-group">
-                    <input type="email" name="email" id="email" tabindex="1" class="form-control" placeholder="Email Address" value="">
-                </div>
-                <div class="form-group">
-                    <input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="Password">
-                </div>
-                <div class="form-group">
-                    <div class="row">
-                        <div class="col-sm-6 col-sm-offset-3">
-                            <input type="submit" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-register" value="Update Now">
-                        </div>
+            <div class="col-xs-0 col-sm-0 col-md-6">
+                <div class="card text-white">
+                    <div class="card-body">
+                        <h1 class="mb-4">Note</h1>
+                        <form store-as="notes" method="add" prefill="true" id="myform">
+                            <div class="form-group"> <label>Title</label>
+                                <input type="text" class="form-control" placeholder="Title" id="title">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-control-label">Note</label>
+                                <textarea class="form-control" id="text" rows="3"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-secondary">Submit</button>
+                        </form>
                     </div>
                 </div>
-            </form>
+            </div>
+            <div class="col-xs-0 col-sm-0 col-md-6">
+                    <notes from-storage>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <span>$name</span><h1>$title</h1>
+                                <p style="float:right;">$createdOn</p>
+                                <p>$text</p>
+                            </div>
+                        </div>
+                    </notes>
+            </div>
         </div>
     </div>
     <script src="../SUM.js"></script>
