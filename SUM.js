@@ -44,8 +44,8 @@ function SUM(config,run) {
             this.add = function (e) {
                 var t = JSON.parse(this.dataSystem.get(this.name));
                 t.push(e), this.dataSystem.set(this.name, JSON.stringify(t)), this.debug === !0 && console.log(this.name + " -> add: Object successfully added!")
-                app.event("SUM","storage",this.name,"add").trigger({input:e,output:null});
-                app.event("SUM","storage","add").trigger({input:e,output:null});
+                app.event("SUM","storage",this.name,"add").broadcast({input:e,output:null});
+                app.event("SUM","storage","add").broadcast({input:e,output:null});
             }, 
             this.exists = function (e, t) {
                 var s = JSON.parse(this.dataSystem.get(this.name));
@@ -63,13 +63,13 @@ function SUM(config,run) {
                     for (var i = 0; i < n.length; i++) {
                         var a = n[i];
                         a[e] == t && (this.debug === !0 && (console.log(this.name + " -> edit: Object before - "), console.log(a)), a[s] = o, this.debug === !0 && (console.log(this.name + " -> edit: Object after - "), console.log(a)), n[i] = a, this.debug === !0 && console.log(this.name + " -> edit: Object saved!"));
-                        app.event("SUM","storage",this.name,"exists").trigger({input:arguments,output:a});
-                        app.event("SUM","storage","exists").trigger({input:arguments,output:a});
+                        app.event("SUM","storage",this.name,"exists").broadcast({input:arguments,output:a});
+                        app.event("SUM","storage","exists").broadcast({input:arguments,output:a});
                     }
                     this.dataSystem.set(this.name, JSON.stringify(n))
                 } else this.debug === !0 && console.log(this.name + " -> edit: No objects are stored!");
-                app.event("SUM","storage",this.name,"exists").trigger({input:arguments,output:false});
-                app.event("SUM","storage","exists").trigger({input:arguments,output:false});
+                app.event("SUM","storage",this.name,"exists").broadcast({input:arguments,output:false});
+                app.event("SUM","storage","exists").broadcast({input:arguments,output:false});
             },
             this.remove = function (e, t) {
                 var s = JSON.parse(this.dataSystem.get(this.name));
@@ -77,47 +77,47 @@ function SUM(config,run) {
                     for (var o = 0; o < s.length; o++) {
                         var n = s[o];
                         n[e] == t && (this.debug === !0 && (console.log(this.name + " -> remove: Object matched for removal -"), console.log(n)), s.splice(o, 1), this.debug === !0 && console.log(this.name + " -> remove: Object deleted!"));
-                        app.event("SUM","storage",this.name,"remove").trigger({input:arguments,output:n});
-                        app.event("SUM","storage","remove").trigger({input:arguments,output:n});
+                        app.event("SUM","storage",this.name,"remove").broadcast({input:arguments,output:n});
+                        app.event("SUM","storage","remove").broadcast({input:arguments,output:n});
                     }
                     this.dataSystem.set(this.name, JSON.stringify(s))
                 } else this.debug === !0 && console.log(this.name + " -> remove: No objects are stored!");
-                app.event("SUM","storage",this.name,"remove").trigger({input:arguments,output:false});
-                app.event("SUM","storage","remove").trigger({input:arguments,output:false});
+                app.event("SUM","storage",this.name,"remove").broadcast({input:arguments,output:false});
+                app.event("SUM","storage","remove").broadcast({input:arguments,output:false});
             }, 
             this.get = function (e, t) {
                 for (var s = JSON.parse(this.dataSystem.get(this.name)), o = 0; o < s.length; o++) {
                     var n = s[o];
                     if (n[e] == t) return this.debug === !0 && (console.log(this.name + " -> get: Object found! "), console.log(n)), n
                 }
-                app.event("SUM","storage",this.name,"get").trigger({input:arguments,output:n});
-                app.event("SUM","storage","get").trigger({input:arguments,output:n});
+                app.event("SUM","storage",this.name,"get").broadcast({input:arguments,output:n});
+                app.event("SUM","storage","get").broadcast({input:arguments,output:n});
                 return this.debug === !0 && console.log(this.name + " -> get: Object not found!"), s.length < 1 && this.debug === !0 && console.log(this.name + " -> get: No objects, with the property of " + e + ", matched " + t), null
             }, 
             this.listAll = function () {
                 var e = JSON.parse(this.dataSystem.get(this.name));
-                app.event("SUM","storage",this.name,"listAll").trigger({input:arguments,output:e});
-                app.event("SUM","storage","listAll").trigger({input:arguments,output:e});
+                app.event("SUM","storage",this.name,"listAll").broadcast({input:arguments,output:e});
+                app.event("SUM","storage","listAll").broadcast({input:arguments,output:e});
                 return e.length < 1 && this.debug === !0 && console.log(this.name + " -> listAll: There are no stored objects to return!"), this.debug === !0 && (console.log(this.name + " -> listAll: Objects were found!"), console.log(e)), e
             },
             this.clear = function () {
-                app.event("SUM","storage",this.name,"clear","before").trigger({input:arguments,output:null});
-                app.event("SUM","storage","clear","before").trigger({input:arguments,output:null});
+                app.event("SUM","storage",this.name,"clear","before").broadcast({input:arguments,output:null});
+                app.event("SUM","storage","clear","before").broadcast({input:arguments,output:null});
                 this.dataSystem.clear();
-                app.event("SUM","storage",this.name,"clear","after").trigger({input:arguments,output:null});
-                app.event("SUM","storage","clear","after").trigger({input:arguments,output:null});
+                app.event("SUM","storage",this.name,"clear","after").broadcast({input:arguments,output:null});
+                app.event("SUM","storage","clear","after").broadcast({input:arguments,output:null});
             },
             this.update = function (ky,v,data) {
                 for (var k in data) {
                     this.edit(ky, v, k, data[k]);
                 }
-                app.event("SUM","storage",this.name,"update").trigger({input:arguments,output:null});
-                app.event("SUM","storage","update").trigger({input:arguments,output:null});
+                app.event("SUM","storage",this.name,"update").broadcast({input:arguments,output:null});
+                app.event("SUM","storage","update").broadcast({input:arguments,output:null});
             },
             this.filter = function (filter) {
                 var results = this.listAll().filter(filter);
-                app.event("SUM","storage",this.name,"filter").trigger({input:arguments,output:results});
-                app.event("SUM","storage","filter").trigger({input:arguments,output:results});
+                app.event("SUM","storage",this.name,"filter").broadcast({input:arguments,output:results});
+                app.event("SUM","storage","filter").broadcast({input:arguments,output:results});
                 return results;
             };
             this.getFormData = function (form) { //returns an object of form elements with names (or IDs) as property names and the values of the elements as the values of the properties.
@@ -253,19 +253,19 @@ function SUM(config,run) {
                     app.users.add(data);
                     sessionStorage.setItem(name + "-current-user", data.guid);
                     react(done, data);
-                    app.event("SUM","users","signup").trigger({input:arguments,output:data});
+                    app.event("SUM","users","signup").broadcast({input:arguments,output:data});
                 } else {
                     react(fail, data, "That "+app.uid+" is already in use!");
-                    app.event("SUM","users","signup").trigger({input:arguments,output:false});
+                    app.event("SUM","users","signup").broadcast({input:arguments,output:false});
                 }
             } else {
                 react(fail, data, "Invalid submission. Password required.");
-                app.event("SUM","users","signup").trigger({input:arguments,output:false});
+                app.event("SUM","users","signup").broadcast({input:arguments,output:false});
                 throw new Error(name+" -> Register: 'password' is a required property");
             }
         } else {
             react(fail, data, "Invalid submission. "+app.uid+" required.");
-            app.event("SUM","users","signup").trigger({input:arguments,output:false});
+            app.event("SUM","users","signup").broadcast({input:arguments,output:false});
             throw new Error(name+" -> Register: "+app.uid+" must be defined.")
         }
     };
@@ -279,7 +279,7 @@ function SUM(config,run) {
         }
         app.users.edit("guid", guid, "lastUpdated", new Date());
         react(finished, data, "Successfully updated user!");
-        app.event("SUM","users","update").trigger({input:arguments,output:data});
+        app.event("SUM","users","update").broadcast({input:arguments,output:data});
     };
     app.auth = function (data, done, fail) {
         if (data[app.uid]) {
@@ -287,23 +287,23 @@ function SUM(config,run) {
                 if (app.users.exists(app.uid, data[app.uid])) {
                     if (app.users.get(app.uid,data[app.uid]).password==hash(data.password)) {
                         react(done, data);
-                        app.event("SUM","users","authenticate").trigger({input:arguments,output:data});
+                        app.event("SUM","users","authenticate").broadcast({input:arguments,output:data});
                     } else {
                         react(fail, data, "Incorrect password!");
-                        app.event("SUM","users","authenticate").trigger({input:arguments,output:false});
+                        app.event("SUM","users","authenticate").broadcast({input:arguments,output:false});
                     }
                 } else {
                     react(fail, data, "User does not exist!");
-                    app.event("SUM","users","authenticate").trigger({input:arguments,output:false});
+                    app.event("SUM","users","authenticate").broadcast({input:arguments,output:false});
                 }
             } else {
                 react(fail, data, "Invalid authentication attempt. Password required.");
-                app.event("SUM","users","authenticate").trigger({input:arguments,output:false});
+                app.event("SUM","users","authenticate").broadcast({input:arguments,output:false});
                 throw new Error(name + " -> Auth: 'password' is a required property");
             }
         } else {
             react(fail, data, "Invalid authentication attempt. " + app.uid + " required.");
-            app.event("SUM","users","authenticate").trigger({input:arguments,output:false});
+            app.event("SUM","users","authenticate").broadcast({input:arguments,output:false});
             throw new Error(name + " -> Auth: " + app.uid + " must be defined.")
         }
     };
@@ -312,16 +312,16 @@ function SUM(config,run) {
             var user = app.users.get(app.uid, data.data[app.uid]);
             sessionStorage.setItem(name + "-current-user", user.guid);
             react(done, data.data, "Login successfull!");
-            app.event("SUM","users","login").trigger({input:arguments,output:data});
+            app.event("SUM","users","login").broadcast({input:arguments,output:data});
         }, function(data) {
             react(fail, data.data, "Login failed!");
-            app.event("SUM","users","login").trigger({input:arguments,output:false});
+            app.event("SUM","users","login").broadcast({input:arguments,output:false});
         });
     };
     app.logout = function (done) {
         sessionStorage.removeItem(name+"-current-user");
         window.location.href = done;
-        app.event("SUM","users","logout").trigger({input:arguments,output:null});
+        app.event("SUM","users","logout").broadcast({input:arguments,output:null});
     };
     app.loggedInAs = function () {
         return sessionStorage.getItem(name+"-current-user") || "User";
@@ -337,10 +337,10 @@ function SUM(config,run) {
             sessionStorage.setItem(name + "-current-user", data.data[app.uid]);
             app.users.remove(app.uid, data[app.uid]);
             react(done, data.data, "User deleted!");
-            app.event("SUM","users","delete").trigger({input:arguments,output:data});
+            app.event("SUM","users","delete").broadcast({input:arguments,output:data});
         }, function (data) {
             react(fail, data.data, "User does not exist!");
-            app.event("SUM","users","delete").trigger({input:arguments,output:false});
+            app.event("SUM","users","delete").broadcast({input:arguments,output:false});
         });
     };
     app.getProfilePictureData = function (id) {
@@ -350,14 +350,14 @@ function SUM(config,run) {
         localStorage.clear();
         sessionStorage.clear();
         window.location.href = window.location.href;
-        app.event("SUM","reset").trigger({input:arguments,output:null});
+        app.event("SUM","reset").broadcast({input:arguments,output:null});
     };
     app.setSecurityQuestion = function (question, answer) {
         var guid = app.loggedInAs();
         if (guid) {
             app.users.update("guid", guid, "SQ", question);
             app.users.update("guid", guid, "SQA", hash(answer));
-            app.event("SUM","users","setSecurityQuestion").trigger({input:arguments,output:true});
+            app.event("SUM","users","setSecurityQuestion").broadcast({input:arguments,output:true});
             return true;
         } else return false;
     };
@@ -368,14 +368,14 @@ function SUM(config,run) {
                 app.users.update(app.uid, uid, "password", newPassword);
                 user = app.users.get(app.uid, uid);
                 react(done, user, "Successfully changed password!");
-                app.event("SUM","users","forgotPassword").trigger({input:arguments,output:user});
+                app.event("SUM","users","forgotPassword").broadcast({input:arguments,output:user});
             } else {
                 react(fail, {}, "Wrong answer.");
-                app.event("SUM","users","forgotPassword").trigger({input:arguments,output:false});
+                app.event("SUM","users","forgotPassword").broadcast({input:arguments,output:false});
             }
         } else {
             react(fail, {}, "That "+app.uid+" isn't used in this application.");
-            app.event("SUM","users","forgotPassword").trigger({input:arguments,output:false});
+            app.event("SUM","users","forgotPassword").broadcast({input:arguments,output:false});
         }
     };
     app.getForm = function (form) { //returns an object of form elements with names (or IDs) as property names and the values of the elements as the values of the properties.
@@ -406,10 +406,10 @@ function SUM(config,run) {
         };
         if (!app.extentions.exists("name",name)) {
             app.extentions.add(extension);
-            app.event("SUM","newComponent").trigger({input:arguments,output:extension});
+            app.event("SUM","newComponent").broadcast({input:arguments,output:extension});
         } else if (app.extentions.exists("name",name)) {
             app.extentions.Update(extension);
-            app.event("SUM","updateComponent").trigger({input:arguments,output:extension});
+            app.event("SUM","updateComponent").broadcast({input:arguments,output:extension});
         }
     };
     var templates = {};
@@ -429,7 +429,7 @@ function SUM(config,run) {
             }
             element.innerHTML += temp;
         });
-        app.event("SUM","users","generateView").trigger({input:arguments,output:null});
+        app.event("SUM","users","generateView").broadcast({input:arguments,output:null});
         // generate any nested views
         var elements = element.querySelectorAll("[from-storage]");
         elements.forEach(function(e) {
@@ -467,7 +467,7 @@ function SUM(config,run) {
         return includes(url,name) || includes(html,name) || includes(title,name);
     };
     app.run = function () {
-        app.event("SUM","run","before").trigger({input:arguments,output:null});
+        app.event("SUM","run","before").broadcast({input:arguments,output:null});
         function fileInfo () {
             var url = window.location.href;
             url = url.split("/");
@@ -621,7 +621,7 @@ function SUM(config,run) {
                 e.setAttribute("src", app.getProfilePictureData(id));
             }
         }, "Display profile picture for the user that is specified, or if set to nothing the user that is logged in.");
-        app.event("SUM","run","after").trigger({input:arguments,output:null});
+        app.event("SUM","run","after").broadcast({input:arguments,output:null});
     }
     if (!!app.Q("html")[0].getAttribute("require-login")) {
         if (!app.loggedIn()) {
