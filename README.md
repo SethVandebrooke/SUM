@@ -45,14 +45,15 @@ Just download it or clone it with git:
 git clone https://github.com/SethVandebrooke/SUM
 ```
 
-SUM installs in 2 easy steps...
+SUM installs and configures in a single simple step...
 
-First include SUM at the bottom of the body:
+Include SUM at the bottom of the body:
 ```html
 <script src="/path/SUM.min.js"></script>
-```
-Then you're done! 
-Oh wait, that was one step.
+```Create 
+Then you're done!
+
+(Yes you have the ability to specifically configure if wanted: [SUM API](#sum-api))
 
 # Using SUM in HTML
 
