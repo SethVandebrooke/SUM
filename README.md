@@ -50,7 +50,7 @@ SUM installs and configures in a single simple step...
 Include SUM at the bottom of the body:
 ```html
 <script src="/path/SUM.min.js"></script>
-```Create 
+``` 
 Then you're done!
 
 (Yes you have the ability to specifically configure if wanted: [SUM API](#sum-api))
