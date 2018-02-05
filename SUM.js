@@ -430,6 +430,12 @@ function SUM(config,run) {
             element.innerHTML += temp;
         });
         app.event("SUM","users","generateView").trigger({input:arguments,output:null});
+        // generate any nested views
+        var elements = element.querySelectorAll("[from-storage]");
+        elements.forEach(function(e) {
+            var c = new Collection(e.tagName);
+            app.generateView(e,c.listAll());
+        });
     };
     app.parseURL = function (char) {
         var url = window.location.href, data = {};
