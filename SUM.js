@@ -473,7 +473,7 @@ function SUM(config,run) {
         });
         headers *= 2;
         var paras = 0;
-        document.body.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(function(e){
+        document.body.querySelectorAll("p").forEach(function(e){
             paras += includes(e.innerHTML,name);
         });
         result += headers + paras;
