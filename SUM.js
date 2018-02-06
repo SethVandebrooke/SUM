@@ -466,7 +466,7 @@ function SUM(config,run) {
             return str.split(str2).length-1;
         }
         result = includes(url,name)*5;
-        result += includes((e?e.getAttribute("id"):""),name)*3;
+        result += includes((element?element.getAttribute("id"):""),name)*3;
         result += includes(html,name)*3;
         result += includes(title,name)*4;
         var headers = 0;
