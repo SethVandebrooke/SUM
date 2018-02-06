@@ -540,7 +540,8 @@ function SUM(config,run) {
                     }
                 } else {
                     console.log("SUM is unsure as to what this form is intended for: ",e);
-                } return; //If SUM has no idea what the form is supposed to do then forget it
+                    return; //If SUM has no idea what the form is supposed to do then forget it
+                }
             }
             if (formType === "signup") {
                 localStorage.setItem(name+"-blueprint",JSON.stringify(app.getForm(e)));
