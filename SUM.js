@@ -466,7 +466,7 @@ function SUM(config,run) {
             return str.split(str2).length-1;
         }
         result = includes(url,name)*5;
-        result += includes(e.getAttribute("id"),name)*3;
+        result += includes((e?e.getAttribute("id"):""),name)*3;
         result += includes(html,name)*3;
         result += includes(title,name)*4;
         var headers = 0;
@@ -519,9 +519,9 @@ function SUM(config,run) {
         FORMS.forEach(function (e) {
             var formType = e.getAttribute("type");
             if (formType == null && FORMS.length === 1) {
-                var lp = app.searchContext("login") + app.searchContext("signin") + app.searchContext("sign in");
-                var sp = app.searchContext("singup") + app.searchContext("sing up") + app.searchContext("register");
-                var up = app.searchContext("update") + app.searchContext("edit") + app.searchContext("change");
+                var lp = app.searchContext("login",e) + app.searchContext("signin",e) + app.searchContext("sign in",e);
+                var sp = app.searchContext("singup",e) + app.searchContext("sing up",e) + app.searchContext("register",e);
+                var up = app.searchContext("update",e) + app.searchContext("edit",e) + app.searchContext("change",e);
 
                 if (lp > sp && lp > up) {
                     formType = "login"; console.log("Deduced: ",formType);
