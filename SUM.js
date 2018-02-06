@@ -458,7 +458,8 @@ function SUM(config,run) {
         var html = element?element.innerHTML:"";
         var url = window.location.href;
         var title = document.querySelector("title");
-        title = title!=null?title.innerHTML:"";
+        title = title?title.innerHTML:"";
+        var id = (element&&element.getAttribute("id"))||"";
         var result = 0;
         function includes(str, str2) {
             str = str.toLowerCase();
@@ -466,7 +467,7 @@ function SUM(config,run) {
             return str.split(str2).length-1;
         }
         result = includes(url,name)*5;
-        result += includes((element?element.getAttribute("id"):""),name)*3;
+        result += includes(id,name)*6;
         result += includes(html,name)*3;
         result += includes(title,name)*4;
         var headers = 0;
@@ -520,20 +521,20 @@ function SUM(config,run) {
             var formType = e.getAttribute("type");
             if (formType == null && FORMS.length === 1) {
                 var lp = app.searchContext("login",e) + app.searchContext("signin",e) + app.searchContext("sign in",e);
-                var sp = app.searchContext("singup",e) + app.searchContext("sing up",e) + app.searchContext("register",e);
+                var sp = app.searchContext("signup",e) + app.searchContext("sign up",e) + app.searchContext("register",e);
                 var up = app.searchContext("update",e) + app.searchContext("edit",e) + app.searchContext("change",e);
-
+                var total = lp+sp+up;
                 if (lp > sp && lp > up) {
-                    formType = "login"; console.log("Deduced: ",formType);
+                    formType = "login"; console.log("Deduced: ",formType,lp/total*100+"% Probability");
                 } else if (sp > lp && sp > up) {
-                    formType = "signup"; console.log("Deduced: ",formType);
+                    formType = "signup"; console.log("Deduced: ",formType,sp/total*100+"% Probability");
                 } else if (up > sp && up > lp) {
-                    formType = "update"; console.log("Deduced: ",formType);
+                    formType = "update"; console.log("Deduced: ",formType,up/total*100+"% Probability");
                 } else if (lp === sp) {
                     if (e.querySelectorAll("input").length > 3) {
-                        formType = "signup"; console.log("Deduced: ",formType);
+                        formType = "signup"; console.log("Deduced: ",formType, "70% Probability");
                     } else {
-                        formType = "login"; console.log("Deduced: ",formType);
+                        formType = "login"; console.log("Deduced: ",formType, "70% Probability");
                     }
                 } else {
                     console.log("SUM is unsure as to what this form is intended for: ",e);
