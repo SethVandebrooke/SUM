@@ -272,7 +272,9 @@ function SUM(config,run) {
     app.update = function (data, guid, finished) {
         for (var k in data) {
             if (k == "password") {
-                app.users.edit("guid", guid, k, hash(data[k]));
+                 if(k.length > 0 && k.replace(/\s+/g,'')!=k) { // If password is not empty or white space
+                     app.users.edit("guid", guid, k, hash(data[k]));
+                 }
             } else {
                 app.users.edit("guid", guid, k, data[k]);
             }
