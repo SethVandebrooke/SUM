@@ -465,8 +465,10 @@ function SUM(config,run) {
             str2 = str2.toLowerCase();
             return str.split(str2).length-1;
         }
-        result = includes(url,name)*4;
+        result = includes(url,name)*5;
+        result += includes(e.getAttribute("id"),name)*3;
         result += includes(html,name)*3;
+        result += includes(title,name)*4;
         var headers = 0;
         document.body.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(function(e){
             headers += includes(e.innerHTML,name);
