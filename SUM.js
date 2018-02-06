@@ -455,16 +455,29 @@ function SUM(config,run) {
         return url;
     };
     app.searchContext = function(name,element) {
-        var html = (element || document.body).innerHTML;
+        var html = element?element.innerHTML:"";
         var url = window.location.href;
         var title = document.querySelector("title");
         title = title!=null?title.innerHTML:"";
+        var result = 0;
         function includes(str, str2) {
             str = str.toLowerCase();
             str2 = str2.toLowerCase();
-            return str.includes(str2);
+            return str.split(str2).length-1;
         }
-        return includes(url,name) || includes(html,name) || includes(title,name);
+        result = includes(url,name)*4;
+        result += includes(html,name)*3;
+        var headers = 0;
+        document.body.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(function(e){
+            headers += includes(e.innerHTML,name);
+        });
+        headers *= 2;
+        var paras = 0;
+        document.body.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(function(e){
+            paras += includes(e.innerHTML,name);
+        });
+        result += headers + paras;
+        return result;
     };
     app.run = function () {
         app.event("SUM","run","before").broadcast({input:arguments,output:null});
@@ -504,13 +517,25 @@ function SUM(config,run) {
         FORMS.forEach(function (e) {
             var formType = e.getAttribute("type");
             if (formType == null && FORMS.length === 1) {
-                if (app.searchContext("login") || app.searchContext("signin")) {
+                var lp = app.searchContext("login") + app.searchContext("signin") + app.searchContext("sign in");
+                var sp = app.searchContext("singup") + app.searchContext("sing up") + app.searchContext("register");
+                var up = app.searchContext("update") + app.searchContext("edit") + app.searchContext("change");
+
+                if (lp > sp && lp > up) {
                     formType = "login"; console.log("Deduced: ",formType);
-                } else if (app.searchContext("singup") || app.searchContext("register")) {
+                } else if (sp > lp && sp > up) {
                     formType = "signup"; console.log("Deduced: ",formType);
-                } else if (app.searchContext("update") || app.searchContext("change")) {
+                } else if (up > sp && up > lp) {
                     formType = "update"; console.log("Deduced: ",formType);
-                } else return; //If SUM has no idea what the form is supposed to do then forget it
+                } else if (lp === sp) {
+                    if (e.querySelectorAll("input").length > 3) {
+                        formType = "signup"; console.log("Deduced: ",formType);
+                    } else {
+                        formType = "login"; console.log("Deduced: ",formType);
+                    }
+                } else {
+                    console.log("SUM is unsure as to what this form is intended for: ",e);
+                } return; //If SUM has no idea what the form is supposed to do then forget it
             }
             if (formType === "signup") {
                 localStorage.setItem(name+"-blueprint",JSON.stringify(app.getForm(e)));
