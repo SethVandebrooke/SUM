@@ -325,6 +325,8 @@ function SUM(config,run) {
     };
     app.logout = function (done) {
         sessionStorage.removeItem(app.name+"-current-user");
+        sessionStorage.removeItem(app.name+"-auth-token");
+        localStorage.removeItem(app.name+"-auth-token");
         window.location.href = done;
         app.event("SUM","users","logout").broadcast({input:arguments,output:null});
     };
