@@ -29,12 +29,12 @@ function SUM(config,run) {
     app.users = (function(){
         function dataGroup(name) {
             this.name = name;
-            this.dataSystem = { 
-                set: function (a, b) { 
-                    return localStorage.setItem(a, b); 
-                }, get: function (a) { 
-                    return localStorage.getItem(a); 
-                } 
+            this.dataSystem = {
+                set: function (a, b) {
+                    return localStorage.setItem(a, b);
+                }, get: function (a) {
+                    return localStorage.getItem(a);
+                }
             };
             if (this.name = name, null == this.dataSystem.get(name)) {
                 var setup = new Array;
@@ -46,7 +46,7 @@ function SUM(config,run) {
                 t.push(e), this.dataSystem.set(this.name, JSON.stringify(t)), this.debug === !0 && console.log(this.name + " -> add: Object successfully added!")
                 app.event("SUM","storage",this.name,"add").broadcast({input:e,output:null});
                 app.event("SUM","storage","add").broadcast({input:e,output:null});
-            }, 
+            },
             this.exists = function (e, t) {
                 var s = JSON.parse(this.dataSystem.get(this.name));
                 if (s.length > 0) {
@@ -56,7 +56,7 @@ function SUM(config,run) {
                     }
                     this.dataSystem.set(this.name, JSON.stringify(s))
                 } else this.debug === !0 && console.log(this.name + " -> exists: No objects are stored!");
-            }, 
+            },
             this.edit = function (e, t, s, o) {
                 var n = JSON.parse(this.dataSystem.get(this.name));
                 if (n.length > 0) {
@@ -84,7 +84,7 @@ function SUM(config,run) {
                 } else this.debug === !0 && console.log(this.name + " -> remove: No objects are stored!");
                 app.event("SUM","storage",this.name,"remove").broadcast({input:arguments,output:false});
                 app.event("SUM","storage","remove").broadcast({input:arguments,output:false});
-            }, 
+            },
             this.get = function (e, t) {
                 for (var s = JSON.parse(this.dataSystem.get(this.name)), o = 0; o < s.length; o++) {
                     var n = s[o];
@@ -93,7 +93,7 @@ function SUM(config,run) {
                 app.event("SUM","storage",this.name,"get").broadcast({input:arguments,output:n});
                 app.event("SUM","storage","get").broadcast({input:arguments,output:n});
                 return this.debug === !0 && console.log(this.name + " -> get: Object not found!"), s.length < 1 && this.debug === !0 && console.log(this.name + " -> get: No objects, with the property of " + e + ", matched " + t), null
-            }, 
+            },
             this.listAll = function () {
                 var e = JSON.parse(this.dataSystem.get(this.name));
                 app.event("SUM","storage",this.name,"listAll").broadcast({input:arguments,output:e});
@@ -312,7 +312,10 @@ function SUM(config,run) {
     app.login = function (data, done, fail) {
         app.auth(data, function(data){
             var user = app.users.get(app.uid, data.data[app.uid]);
-            sessionStorage.setItem(name + "-current-user", user.guid);
+            sessionStorage.setItem(app.name + "-current-user", user.guid);
+            var token = hash(user.guid + data.password + Math.random());
+            sessionStorage.setItem(app.name + "-auth-token", token);
+            localStorage.setItem(app.name+"-auth-token", hash(token));
             react(done, data.data, "Login successfull!");
             app.event("SUM","users","login").broadcast({input:arguments,output:data});
         }, function(data) {
@@ -321,18 +324,20 @@ function SUM(config,run) {
         });
     };
     app.logout = function (done) {
-        sessionStorage.removeItem(name+"-current-user");
+        sessionStorage.removeItem(app.name+"-current-user");
         window.location.href = done;
         app.event("SUM","users","logout").broadcast({input:arguments,output:null});
     };
     app.loggedInAs = function () {
-        return sessionStorage.getItem(name+"-current-user") || "User";
+        return app.loggedIn?sessionStorage.getItem(app.name+"-current-user") : false;
     };
     app.loggedIn = function () {
-        return sessionStorage.getItem(name + "-current-user") != null ? true : false;
+        var validGuid = app.users.get("guid",sessionStorage.getItem(app.name + "-current-user"));
+        var validToken = hash(sessionStorage.getItem(app.name + "-auth-token")) == localStorage.getItem(app.name + "-auth-token");
+        return validGuid && validToken;
     };
     app.currentUser = function () {
-        return app.users.get("guid",app.loggedInAs());
+        return app.loggedIn() ? app.users.get("guid",app.loggedInAs()) : {};
     };
     app.deleteUserAccount = function (data, done, fail) {
         app.auth(data, function (data) {
@@ -591,7 +596,7 @@ function SUM(config,run) {
                 app.logout(e.getAttribute("logout") || window.location.href);
             });
         }, "Logout the user when clicked.");
-        // 
+        //
         app.newComponent("Delete User", "[delete-user-account]", function(e){
             app.deleteUserAccount(
                 !!e.getAttribute("delete-user-account") ? e.getAttribute("delete-user-account") : app.loggedInAs(),
