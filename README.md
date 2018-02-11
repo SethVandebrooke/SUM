@@ -1,8 +1,8 @@
 # SUM - Serverless User Management - Version: 1.7.13
 Serverless, Painless, Seamless
 
-SUM makes user data management a seamless/painless process without requiring a server of any kind. It analyzes your html pages (as they load) in order to simulate/generate the needed database, backend, and frontend functionality.
-SUM then provides application specific html tags and attributes that make adding full functionality as easy HTML itself.
+SUM makes mocking user data management a seamless, painless process. It simulates backend functionality by analyzing your html pages as they load and then generating the required database. It uses the browser's local storage, so no server required.
+In addition, SUM provides application specific html tags and attributes that make adding full functionality as easy HTML itself.
 
 ## Contents
 - [Getting Started](#getting-started)
@@ -25,9 +25,9 @@ SUM then provides application specific html tags and attributes that make adding
 
 ### What is it? ...and what does it do?
 
+ - SUM focuses on making signing in, logging in, logging out, viewing and updating user data easier than making the UI itself.
  - SUM makes prototyping web/hybrid applications of any kind quick and painless without taking up hardly any space (it's a single file).
  - SUM works anywhere and everywhere: electron (windows, mac, linux), cordova (android, ios, etc...), and browsers alike.
- - SUM focuses on making signing in, logging in, logging out, viewing and updating user data easier than making the UI itself.
  - SUM requires no configuration. Just plug and play right out of the box! You don't even have to touch the JavaScript if you don't want to!
  - SUM is fully extendable! It's built with a simple API that gives you full control over its capabilities.
  - SUM user data persists across multiple pages.
