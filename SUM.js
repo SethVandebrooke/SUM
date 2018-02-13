@@ -134,21 +134,25 @@ function SUM(config,run) {
                 }
                 return response;
             };
+            var dg = this;
             this.addFromForm = function(formElement) {
-                var obj = this.getFormData(formElement);
+                var obj = dg.getFormData(formElement);
                 obj.createdOn = new Date();
                 obj.lastUpdated = new Date();
-                obj.guid = btoa(math.random()*100000000+"");
+                obj.guid = btoa(Math.random()*100000000+"");
                 obj.createdBy = app.currentUser().guid;
-                this.add(obj);
+                dg.add(obj);
             };
             this.attatchToForm = function (formElement) {
-                var dg = this;
                 var type = formElement.getAttribute("method");
                 if (type=="add") {
                   formElement.addEventListener("submit", function(e){
                       e.preventDefault();
                       dg.addFromForm(e.target);
+                      if (e.target.getAttribute("on-success")) {
+                         window.location.href =
+                          (e.target.getAttribute("on-success") || window.location.href)
+                      }
                   });
                 } else if (type=="update") {
                      formElement.addEventListener("submit", function(e){
@@ -156,6 +160,10 @@ function SUM(config,run) {
                     var field = e.target.getAttribute("field");
                         var value = e.target.getAttribute("value");
                         dg.updateForm(e.target,field,value);
+                        if (e.target.getAttribute("on-success")) {
+                           window.location.href =
+                            (e.target.getAttribute("on-success") || window.location.href)
+                        }
                   });
                   if (formElement.getAttribute("prefill")=="true") {
                     var field = formElement.getAttribute("field");
@@ -185,7 +193,7 @@ function SUM(config,run) {
         document.querySelectorAll("form").forEach(function(element){
             var ds = element.getAttribute("store-as")||false;
             if (ds) {
-                var table = new dataGroup(ds);
+                var table = new dataGroup(ds.toUpperCase());
                 table.attatchToForm(element);
             }
         });
@@ -250,6 +258,9 @@ function SUM(config,run) {
                     data.joinedOn = new Date();
                     data.lastUpdated = new Date();
                     data.guid = btoa("" + Math.random() * 1000000000000);
+                    var token = hash(user.guid + data.password + Math.random());
+                    sessionStorage.setItem(app.name + "-auth-token", token);
+                    localStorage.setItem(app.name+"-auth-token", hash(token));
                     app.users.add(data);
                     sessionStorage.setItem(name + "-current-user", data.guid);
                     react(done, data);
@@ -528,7 +539,7 @@ function SUM(config,run) {
         var FORMS = document.querySelectorAll("form");
         FORMS.forEach(function (e) {
             var formType = e.getAttribute("type");
-            if (formType == null && FORMS.length === 1) {
+            if (formType == null && FORMS.length === 1 && !e.getAttribute("store-as")) {
                 var lp = app.searchContext("login",e) + app.searchContext("signin",e) + app.searchContext("sign in",e);
                 var sp = app.searchContext("signup",e) + app.searchContext("sign up",e) + app.searchContext("register",e);
                 var up = app.searchContext("update",e) + app.searchContext("edit",e) + app.searchContext("change",e);
@@ -549,41 +560,41 @@ function SUM(config,run) {
                     console.log("SUM is unsure as to what this form is intended for: ",e);
                     return; //If SUM has no idea what the form is supposed to do then forget it
                 }
-            }
-            if (formType === "signup") {
-                localStorage.setItem(name+"-blueprint",JSON.stringify(app.getForm(e)));
-            }
-            e.addEventListener("submit", function (e2) {
-                var formData = app.getForm(e);
-                var id = e.getAttribute("uid");
-                if (id != null) {
-                    app.uid = id;
-                    localStorage.setItem(app.name+"uid", id);
+                if (formType === "signup") {
+                    localStorage.setItem(name+"-blueprint",JSON.stringify(app.getForm(e)));
                 }
-                if (formType === "login" || formType === "signup") {
-                    e2.preventDefault();
-                    app[formType](
-                        formData,
-                        e.getAttribute("on-success") || window.location.href,
-                        e.getAttribute("on-fail") || window.location.href
-                    );
-                } else if (formType === "update") {
-                    e2.preventDefault();
-                    app.update(
-                        formData,
-                        app.loggedInAs(),
-                        e.getAttribute("on-success") || window.location.href
-                    );
-                }
-            });
-            if (formType === "update") { //Prefill update form
-                var user = app.currentUser();
-                for (var k in user) {
-                    e.querySelectorAll("#" + k + ", [name='" + k + "']").forEach(function (a) {
-                        if (k != "password") {
-                            a.setAttribute("value", user[k]);
-                        }
-                    });
+                e.addEventListener("submit", function (e2) {
+                    var formData = app.getForm(e);
+                    var id = e.getAttribute("uid");
+                    if (id != null) {
+                        app.uid = id;
+                        localStorage.setItem(app.name+"uid", id);
+                    }
+                    if (formType === "login" || formType === "signup") {
+                        e2.preventDefault();
+                        app[formType](
+                            formData,
+                            e.getAttribute("on-success") || window.location.href,
+                            e.getAttribute("on-fail") || window.location.href
+                        );
+                    } else if (formType === "update") {
+                        e2.preventDefault();
+                        app.update(
+                            formData,
+                            app.loggedInAs(),
+                            e.getAttribute("on-success") || window.location.href
+                        );
+                    }
+                });
+                if (formType === "update") { //Prefill update form
+                    var user = app.currentUser();
+                    for (var k in user) {
+                        e.querySelectorAll("#" + k + ", [name='" + k + "']").forEach(function (a) {
+                            if (k != "password") {
+                                a.setAttribute("value", user[k]);
+                            }
+                        });
+                    }
                 }
             }
             var fields = [];
@@ -618,6 +629,7 @@ function SUM(config,run) {
         }, "For each user, display the innerHTML of the given element after replacing each $propertyName with its value.");
         app.newComponent("Display stored data", "[from-storage]", function(e){
             var c = new Collection(e.tagName);
+            console.log(e,c);
             app.generateView(e,c.listAll());
         }, "For each object stored in the given collection, display the innerHTML of the given element after replacing each $propertyName with its value.");
         app.newComponent("App name", "app-name", function (e) {
